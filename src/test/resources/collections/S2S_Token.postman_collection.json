@@ -1,0 +1,235 @@
+{
+  "info": {
+    "_postman_id": "be51b570-dd9a-41c3-ba75-65d667bc165e",
+    "name": "S2S_Token",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "42440020"
+  },
+  "item": [
+    {
+      "name": "https://login.stg.toyotadriverslogin.com/oauth2/access_token?realm=%2Ftmna-native",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          },
+          {
+            "key": "Authorization",
+            "value": "Basic Y3RfZXY6TXVad2s4a25IQ1QyQUp5QQ=="
+          },
+          {
+            "key": "Cookie",
+            "value": "route=1713298584.105.1371.638905|a0584f15bd9eaabdc7a23ada8773ef70"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "type": "text",
+              "key": "grant_type",
+              "value": "client_credentials"
+            }
+          ]
+        },
+        "url": {
+          "raw": "https://login.stg.toyotadriverslogin.com/oauth2/access_token?realm=%2Ftmna-native",
+          "protocol": "https",
+          "host": [
+            "login",
+            "stg",
+            "toyotadriverslogin",
+            "com"
+          ],
+          "path": [
+            "oauth2",
+            "access_token"
+          ],
+          "query": [
+            {
+              "key": "realm",
+              "value": "%2Ftmna-native"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --location 'https://login.stg.toyotadriverslogin.com/oauth2/access_token?realm=%2Ftmna-native' \\\r\n--header 'Content-Type: application/x-www-form-urlencoded' \\\r\n--header 'Authorization: Basic Y3RfZXY6TXVad2s4a25IQ1QyQUp5QQ==' \\\r\n--header 'Cookie: route=1713298584.105.1371.638905|a0584f15bd9eaabdc7a23ada8773ef70' \\\r\n--data-urlencode 'grant_type=client_credentials'"
+      },
+      "response": []
+    },
+    {
+      "name": "https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/rsa-signatures",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-GUID",
+            "value": "8adcd67f83f9c6eb0183fbfc84356e4f"
+          },
+          {
+            "key": "x-api-key",
+            "value": "7e7ecaf3d6ad8ae098083a5722da303d"
+          },
+          {
+            "key": "x-channel",
+            "value": "ct_ev"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJKUU40WjJ1Vm54V1VFTWlTVkJLVmdEN2NLdHM9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJDVF9FViIsImN0cyI6Ik9BVVRIMl9TVEFURUxFU1NfR1JBTlQiLCJhdWRpdFRyYWNraW5nSWQiOiJjMjQwNDA3NS03ZWI1LTQzNTAtOWY4Yi00YzQ4MzA4Y2M2ZmEtNjcyNzI3MzkiLCJzdWJuYW1lIjoiQ1RfRVYiLCJpc3MiOiJodHRwczovL2xvZ2luLnN0Zy50b3lvdGFkcml2ZXJzbG9naW4uY29tL29hdXRoMi9yZWFsbXMvcm9vdC9yZWFsbXMvdG1uYS1uYXRpdmUiLCJ0b2tlbk5hbWUiOiJhY2Nlc3NfdG9rZW4iLCJ0b2tlbl90eXBlIjoiQmVhcmVyIiwiYXV0aEdyYW50SWQiOiJ0a0JLMDVrenpud1NvOXZpMzd0bXlFUThBS0EiLCJhdWQiOiJDVF9FViIsIm5iZiI6MTczOTg5MzY4MSwiZ3JhbnRfdHlwZSI6ImNsaWVudF9jcmVkZW50aWFscyIsInNjb3BlIjpbInJlYWQiXSwiYXV0aF90aW1lIjoxNzM5ODkzNjgxLCJyZWFsbSI6Ii90bW5hLW5hdGl2ZSIsImV4cCI6MTczOTg5NTQ4MSwiaWF0IjoxNzM5ODkzNjgxLCJleHBpcmVzX2luIjoxODAwLCJqdGkiOiJVLW52eGVmOFVWR0tDdHhwRW95MHpEa1UtZVkifQ.U54P19qY8L4eMIS3rFu0ta1DiqBRtN4F3PrkYJPZQZ7j0AU5CQl3YAn-Jo1DleGYBy2R5CM83ZEVANuRc7CDXnNcL7hzSONsB784_xygoB7S5Rd6YnwE7e8DMv5tMpWOXrEZohL80j6526cIChPBRoFX0ZFxFK8l2Z0pTLRtfabHmRSlAnHdkumU1y_CeFd3W2MGQk6VpqPdiw7GjrPXWqEIHthohZqekoVmknlfV8fPmBFIKmXsmQ-Xk-7-g57ytich0o1oX3UOwMir8TIXvHEQoDzwvsBhLa5W13UHvZcf6SC9bTH_7esEXdKiYEuCq3l0QZXrFyjvfLmWgHAg5Q"
+          }
+        ],
+        "url": {
+          "raw": "https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/rsa-signatures",
+          "protocol": "https",
+          "host": [
+            "ctp-secure-int",
+            "stg-telematicsct",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "payment",
+            "toyotapay",
+            "wallet",
+            "rsa-signatures"
+          ]
+        },
+        "description": "Generated from cURL: curl --location 'https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/rsa-signatures' \\\r\n--header 'X-GUID: 8adcd67f83f9c6eb0183fbfc84356e4f' \\\r\n--header 'x-api-key: 7e7ecaf3d6ad8ae098083a5722da303d' \\\r\n--header 'x-channel: ct_ev' \\\r\n--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJKUU40WjJ1Vm54V1VFTWlTVkJLVmdEN2NLdHM9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJDVF9FViIsImN0cyI6Ik9BVVRIMl9TVEFURUxFU1NfR1JBTlQiLCJhdWRpdFRyYWNraW5nSWQiOiJjMjQwNDA3NS03ZWI1LTQzNTAtOWY4Yi00YzQ4MzA4Y2M2ZmEtNjcyNzI3MzkiLCJzdWJuYW1lIjoiQ1RfRVYiLCJpc3MiOiJodHRwczovL2xvZ2luLnN0Zy50b3lvdGFkcml2ZXJzbG9naW4uY29tL29hdXRoMi9yZWFsbXMvcm9vdC9yZWFsbXMvdG1uYS1uYXRpdmUiLCJ0b2tlbk5hbWUiOiJhY2Nlc3NfdG9rZW4iLCJ0b2tlbl90eXBlIjoiQmVhcmVyIiwiYXV0aEdyYW50SWQiOiJ0a0JLMDVrenpud1NvOXZpMzd0bXlFUThBS0EiLCJhdWQiOiJDVF9FViIsIm5iZiI6MTczOTg5MzY4MSwiZ3JhbnRfdHlwZSI6ImNsaWVudF9jcmVkZW50aWFscyIsInNjb3BlIjpbInJlYWQiXSwiYXV0aF90aW1lIjoxNzM5ODkzNjgxLCJyZWFsbSI6Ii90bW5hLW5hdGl2ZSIsImV4cCI6MTczOTg5NTQ4MSwiaWF0IjoxNzM5ODkzNjgxLCJleHBpcmVzX2luIjoxODAwLCJqdGkiOiJVLW52eGVmOFVWR0tDdHhwRW95MHpEa1UtZVkifQ.U54P19qY8L4eMIS3rFu0ta1DiqBRtN4F3PrkYJPZQZ7j0AU5CQl3YAn-Jo1DleGYBy2R5CM83ZEVANuRc7CDXnNcL7hzSONsB784_xygoB7S5Rd6YnwE7e8DMv5tMpWOXrEZohL80j6526cIChPBRoFX0ZFxFK8l2Z0pTLRtfabHmRSlAnHdkumU1y_CeFd3W2MGQk6VpqPdiw7GjrPXWqEIHthohZqekoVmknlfV8fPmBFIKmXsmQ-Xk-7-g57ytich0o1oX3UOwMir8TIXvHEQoDzwvsBhLa5W13UHvZcf6SC9bTH_7esEXdKiYEuCq3l0QZXrFyjvfLmWgHAg5Q'"
+      },
+      "response": []
+    },
+    {
+      "name": "tc_agent",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          },
+          {
+            "key": "Cookie",
+            "value": "route=1750280831.131.1101.639670|a0584f15bd9eaabdc7a23ada8773ef70; route=1770307181.699.2170.447955|a0584f15bd9eaabdc7a23ada8773ef70"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJKUU40WjJ1Vm54V1VFTWlTVkJLVmdEN2NLdHM9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJ0Y19hZ2VudCIsImN0cyI6Ik9BVVRIMl9TVEFURUxFU1NfR1JBTlQiLCJhdWRpdFRyYWNraW5nSWQiOiI2ZjNkMGZmMi02N2UwLTQzNDItYTYzOS0xNzcwMjg0NGNjZTEtMjU1MjgxMiIsInN1Ym5hbWUiOiJ0Y19hZ2VudCIsImlzcyI6Imh0dHBzOi8vbG9naW4uc3RnLnRveW90YWRyaXZlcnNsb2dpbi5jb20vb2F1dGgyL3JlYWxtcy9yb290L3JlYWxtcy90bW5hLW5hdGl2ZSIsInRva2VuTmFtZSI6ImFjY2Vzc190b2tlbiIsInRva2VuX3R5cGUiOiJCZWFyZXIiLCJhdXRoR3JhbnRJZCI6IjgzckdsTGVUOWxMdHhDVk5yRmFmZFJCd1RNayIsImF1ZCI6InRjX2FnZW50IiwibmJmIjoxNzUxMzExMDYxLCJncmFudF90eXBlIjoiY2xpZW50X2NyZWRlbnRpYWxzIiwic2NvcGUiOlsicmVhZCJdLCJhdXRoX3RpbWUiOjE3NTEzMTEwNjEsInJlYWxtIjoiL3RtbmEtbmF0aXZlIiwiZXhwIjoxNzUxMzEyODYxLCJpYXQiOjE3NTEzMTEwNjEsImV4cGlyZXNfaW4iOjE4MDAsImp0aSI6Imhic05PREN4N1o1TnFjLWF2VHNOLWdER0swMCJ9.hB3Cm-HqdG-ZgcbWmz09lPh6PrM8CBcTjDaqab7BZ7MENs_CR0pamSxIjaFPAiH0RMr-e9TWOeg7LDjJjR9PUzL-hCXBqxoJtjom_GccmjU1Qd5k4TDjkjnawFlmrqjMM3xH2uKm78sV0EisNKlXCb-BdiOvHbu5oeefAUEEEgA3-Ec-sM03UgJmERVBP9zeb4DN20zBHGSYQ85mjVGTIMX4smtuMlPXqJzIlezr7WOhZKdBTwm0ycz4ykhryXK4jhtNcqmDbx95QNnTxH0ypHx4cDuvgPlTlhkhcNLkuwhexg-x6JH27IfDs3q02zT89Rn4Cf8c8of7GWwPyrgatA"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "type": "text",
+              "key": "client_id",
+              "value": "tc_agent"
+            },
+            {
+              "type": "text",
+              "key": "client_secret",
+              "value": "IGOkArJ4CseAYrRj"
+            },
+            {
+              "type": "text",
+              "key": "grant_type",
+              "value": "client_credentials"
+            },
+            {
+              "type": "text",
+              "key": "resource",
+              "value": "https://tmnab2cqa.onmicrosoft.com/CTPAPIDev"
+            }
+          ]
+        },
+        "url": {
+          "raw": "https://login.stg.toyotadriverslogin.com/oauth2/access_token?realm=%2Ftmna-native",
+          "protocol": "https",
+          "host": [
+            "login",
+            "stg",
+            "toyotadriverslogin",
+            "com"
+          ],
+          "path": [
+            "oauth2",
+            "access_token"
+          ],
+          "query": [
+            {
+              "key": "realm",
+              "value": "%2Ftmna-native"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --location 'https://login.stg.toyotadriverslogin.com/oauth2/access_token?realm=%2Ftmna-native' \\\n\r\n--header 'Content-Type: application/x-www-form-urlencoded' \\\n\r\n--header 'Cookie: route=1750280831.131.1101.639670|a0584f15bd9eaabdc7a23ada8773ef70; route=1770307181.699.2170.447955|a0584f15bd9eaabdc7a23ada8773ef70' \\\n\r\n--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJKUU40WjJ1Vm54V1VFTWlTVkJLVmdEN2NLdHM9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJ0Y19hZ2VudCIsImN0cyI6Ik9BVVRIMl9TVEFURUxFU1NfR1JBTlQiLCJhdWRpdFRyYWNraW5nSWQiOiI2ZjNkMGZmMi02N2UwLTQzNDItYTYzOS0xNzcwMjg0NGNjZTEtMjU1MjgxMiIsInN1Ym5hbWUiOiJ0Y19hZ2VudCIsImlzcyI6Imh0dHBzOi8vbG9naW4uc3RnLnRveW90YWRyaXZlcnNsb2dpbi5jb20vb2F1dGgyL3JlYWxtcy9yb290L3JlYWxtcy90bW5hLW5hdGl2ZSIsInRva2VuTmFtZSI6ImFjY2Vzc190b2tlbiIsInRva2VuX3R5cGUiOiJCZWFyZXIiLCJhdXRoR3JhbnRJZCI6IjgzckdsTGVUOWxMdHhDVk5yRmFmZFJCd1RNayIsImF1ZCI6InRjX2FnZW50IiwibmJmIjoxNzUxMzExMDYxLCJncmFudF90eXBlIjoiY2xpZW50X2NyZWRlbnRpYWxzIiwic2NvcGUiOlsicmVhZCJdLCJhdXRoX3RpbWUiOjE3NTEzMTEwNjEsInJlYWxtIjoiL3RtbmEtbmF0aXZlIiwiZXhwIjoxNzUxMzEyODYxLCJpYXQiOjE3NTEzMTEwNjEsImV4cGlyZXNfaW4iOjE4MDAsImp0aSI6Imhic05PREN4N1o1TnFjLWF2VHNOLWdER0swMCJ9.hB3Cm-HqdG-ZgcbWmz09lPh6PrM8CBcTjDaqab7BZ7MENs_CR0pamSxIjaFPAiH0RMr-e9TWOeg7LDjJjR9PUzL-hCXBqxoJtjom_GccmjU1Qd5k4TDjkjnawFlmrqjMM3xH2uKm78sV0EisNKlXCb-BdiOvHbu5oeefAUEEEgA3-Ec-sM03UgJmERVBP9zeb4DN20zBHGSYQ85mjVGTIMX4smtuMlPXqJzIlezr7WOhZKdBTwm0ycz4ykhryXK4jhtNcqmDbx95QNnTxH0ypHx4cDuvgPlTlhkhcNLkuwhexg-x6JH27IfDs3q02zT89Rn4Cf8c8of7GWwPyrgatA' \\\n\r\n--data-urlencode 'client_id=tc_agent' \\\n\r\n--data-urlencode 'client_secret=IGOkArJ4CseAYrRj' \\\n\r\n--data-urlencode 'grant_type=client_credentials' \\\n\r\n--data-urlencode 'resource=https://tmnab2cqa.onmicrosoft.com/CTPAPIDev'\n "
+      },
+      "response": []
+    },
+    {
+      "name": "Generate RSA Token - CA region , Toyota Brand, Creditcard",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-GUID",
+            "value": "8adcd67f83f9c6eb0183fbfc84356e4f"
+          },
+          {
+            "key": "x-api-key",
+            "value": "7e7ecaf3d6ad8ae098083a5722da303d"
+          },
+          {
+            "key": "x-channel",
+            "value": "TC_AGENT"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJKUU40WjJ1Vm54V1VFTWlTVkJLVmdEN2NLdHM9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJ0Y19hZ2VudCIsImN0cyI6Ik9BVVRIMl9TVEFURUxFU1NfR1JBTlQiLCJhdWRpdFRyYWNraW5nSWQiOiI3YjliNzA0Ni0zZjExLTRhODEtYWEzMy02NTQyYTAzNzE3NTUtNjI2NDY1NjQiLCJzdWJuYW1lIjoidGNfYWdlbnQiLCJpc3MiOiJodHRwczovL2xvZ2luLnN0Zy50b3lvdGFkcml2ZXJzbG9naW4uY29tL29hdXRoMi9yZWFsbXMvcm9vdC9yZWFsbXMvdG1uYS1uYXRpdmUiLCJ0b2tlbk5hbWUiOiJhY2Nlc3NfdG9rZW4iLCJ0b2tlbl90eXBlIjoiQmVhcmVyIiwiYXV0aEdyYW50SWQiOiI5R1lpNGg1bExqWlk0RGFLem5FbGdLYllKSHMiLCJhdWQiOiJ0Y19hZ2VudCIsIm5iZiI6MTc3MDMyMTU1OCwiZ3JhbnRfdHlwZSI6ImNsaWVudF9jcmVkZW50aWFscyIsInNjb3BlIjpbInJlYWQiXSwiYXV0aF90aW1lIjoxNzcwMzIxNTU4LCJyZWFsbSI6Ii90bW5hLW5hdGl2ZSIsImV4cCI6MTc3MDMyMzM1OCwiaWF0IjoxNzcwMzIxNTU4LCJleHBpcmVzX2luIjoxODAwLCJqdGkiOiJEMmZKVlg2djM2eVhNR3RqZGxVRVR5VUtxRFUifQ.BX8BzyoqEctUtIyeuJvj_HWdbk-YY3ZFMHA58Y288c8er4lRk8aQv2mo3nczyL8Wvu2wjNsiS7GqbzkAhxUvIxY2SNLtYhEP2xQDa4xy0eL1owFGwL3h7SbQ_7ThkkV5AIwzAms7vE6rOaggiV5r-DNdVGwCHGKkrDKizAbAtHB-4IEtmnFmRdMZ2XK1M8l4ukDoRXkSuzJKp21ywUDH4-Ew-OQEhNk0QX_iRwxK1Q03PXmDfX0tjSI1Mi0IG7nOZzJoddTrbVlCWzDMla_bLxZ7Zmmo3NxoSmwq7-INYF-JJaz0ZGJFjnpmih9rZ6eRdA15-WLornSojQKuUDV9jg"
+          },
+          {
+            "key": "X-REGION",
+            "value": "Us"
+          },
+          {
+            "key": "X-BRAND",
+            "value": "T"
+          },
+          {
+            "key": "X-PAYMENT-TYPE",
+            "value": "cc"
+          }
+        ],
+        "url": {
+          "raw": "https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/rsa-signatures",
+          "protocol": "https",
+          "host": [
+            "ctp-secure-int",
+            "stg-telematicsct",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "payment",
+            "toyotapay",
+            "wallet",
+            "rsa-signatures"
+          ]
+        },
+        "description": "Generated from cURL: curl --location 'https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/rsa-signatures' \\\r\n--header 'X-GUID: 8adcd67f83f9c6eb0183fbfc84356e4f' \\\r\n--header 'x-api-key: 7e7ecaf3d6ad8ae098083a5722da303d' \\\r\n--header 'x-channel: TC_AGENT' \\\r\n--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJKUU40WjJ1Vm54V1VFTWlTVkJLVmdEN2NLdHM9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJ0Y19hZ2VudCIsImN0cyI6Ik9BVVRIMl9TVEFURUxFU1NfR1JBTlQiLCJhdWRpdFRyYWNraW5nSWQiOiI3YjliNzA0Ni0zZjExLTRhODEtYWEzMy02NTQyYTAzNzE3NTUtNjI2NDY1NjQiLCJzdWJuYW1lIjoidGNfYWdlbnQiLCJpc3MiOiJodHRwczovL2xvZ2luLnN0Zy50b3lvdGFkcml2ZXJzbG9naW4uY29tL29hdXRoMi9yZWFsbXMvcm9vdC9yZWFsbXMvdG1uYS1uYXRpdmUiLCJ0b2tlbk5hbWUiOiJhY2Nlc3NfdG9rZW4iLCJ0b2tlbl90eXBlIjoiQmVhcmVyIiwiYXV0aEdyYW50SWQiOiI5R1lpNGg1bExqWlk0RGFLem5FbGdLYllKSHMiLCJhdWQiOiJ0Y19hZ2VudCIsIm5iZiI6MTc3MDMyMTU1OCwiZ3JhbnRfdHlwZSI6ImNsaWVudF9jcmVkZW50aWFscyIsInNjb3BlIjpbInJlYWQiXSwiYXV0aF90aW1lIjoxNzcwMzIxNTU4LCJyZWFsbSI6Ii90bW5hLW5hdGl2ZSIsImV4cCI6MTc3MDMyMzM1OCwiaWF0IjoxNzcwMzIxNTU4LCJleHBpcmVzX2luIjoxODAwLCJqdGkiOiJEMmZKVlg2djM2eVhNR3RqZGxVRVR5VUtxRFUifQ.BX8BzyoqEctUtIyeuJvj_HWdbk-YY3ZFMHA58Y288c8er4lRk8aQv2mo3nczyL8Wvu2wjNsiS7GqbzkAhxUvIxY2SNLtYhEP2xQDa4xy0eL1owFGwL3h7SbQ_7ThkkV5AIwzAms7vE6rOaggiV5r-DNdVGwCHGKkrDKizAbAtHB-4IEtmnFmRdMZ2XK1M8l4ukDoRXkSuzJKp21ywUDH4-Ew-OQEhNk0QX_iRwxK1Q03PXmDfX0tjSI1Mi0IG7nOZzJoddTrbVlCWzDMla_bLxZ7Zmmo3NxoSmwq7-INYF-JJaz0ZGJFjnpmih9rZ6eRdA15-WLornSojQKuUDV9jg' \\\r\n--header 'X-REGION: CA' \\\r\n--header 'X-BRAND: T' \\\r\n--header 'X-PAYMENT-TYPE: cc'"
+      },
+      "response": []
+    }
+  ]
+}

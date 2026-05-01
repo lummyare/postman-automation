@@ -1,0 +1,855 @@
+{
+  "info": {
+    "_postman_id": "51b09975-f839-430e-90ba-0e5f1bfcd16d",
+    "name": "Delete PM",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "42440020"
+  },
+  "item": [
+    {
+      "name": "2.0- Delete PaymentMethodById- Unauthorized",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.sendRequest({\r",
+              "    url: 'https://login.stg.toyotadriverslogin.com/oauth2/access_token?realm=%2Ftmna-native',\r",
+              "    method: 'POST',\r",
+              "    header: {\r",
+              "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+              "        'Authorization': 'Basic Y3RfZXY6TXVad2s4a25IQ1QyQUp5QQ=='\r",
+              "    },\r",
+              "    body: {\r",
+              "        mode: 'urlencoded',\r",
+              "        urlencoded: [\r",
+              "            { key: 'grant_type', value: 'client_credentials' }\r",
+              "        ]\r",
+              "    }\r",
+              "}, function (err, res) {\r",
+              "    if (err) {\r",
+              "        console.error('Token request failed:', err);\r",
+              "        return;\r",
+              "    }\r",
+              "\r",
+              "    const json = res.json();\r",
+              "\r",
+              "    if (!json.access_token) {\r",
+              "        console.error('No access_token in response:', json);\r",
+              "        return;\r",
+              "    }\r",
+              "\r",
+              "    // Set token in environment\r",
+              "    pm.environment.set('access_token', json.access_token);\r",
+              "\r",
+              "    console.log('Access token stored in environment');\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Delete non-default PM - HTTP success\", function () {\r",
+              " pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+              "});\r",
+              "// If response has JSON success message, validate it (safe parsing)\r",
+              "let bodyText = pm.response.text();\r",
+              "if (bodyText && bodyText.trim().startsWith(\"{\")) {\r",
+              " let json = pm.response.json();\r",
+              " const respCode = json?.status?.messages?.[0]?.responseCode;\r",
+              " if (respCode) {\r",
+              "   pm.test(\"responseCode is SUCCESS\", function () {\r",
+              "     pm.expect(respCode).to.eql(\"SUCCESS\");\r",
+              "   });\r",
+              " }\r",
+              "}\r",
+              "// Save deleted PM id (for Step 4: delete again -> not found)\r",
+              "pm.environment.set(\"deletedPmId\", pm.environment.get(\"nonDefaultPmId\"));\r",
+              "console.log(\"Deleted PM ID saved:\", pm.environment.get(\"deletedPmId\"));"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "X-GUID",
+            "value": "bf6e23e1aa3c49d7a83758cbd6a7e895"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{API_Key}}"
+          },
+          {
+            "key": "x-channel",
+            "value": "{{x-channel1}}"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "disabled": true
+          }
+        ],
+        "url": {
+          "raw": "{{BaseUrl}}wallet/payment-method/{{defaultPmId}}",
+          "host": [
+            "{{BaseUrl}}wallet"
+          ],
+          "path": [
+            "payment-method",
+            "{{defaultPmId}}"
+          ]
+        },
+        "description": "Generated from cURL: curl --location --request DELETE 'https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/payment-method/8adcd9928193c0a10181969602391df6' \\\r\n--header 'X-GUID: b666ea4fe74844e980191472f7f884f6' \\\r\n--header 'x-api-key: 7e7ecaf3d6ad8ae098083a5722da303d' \\\r\n--header 'x-channel: CT_EV' \\\r\n--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJKUU40WjJ1Vm54V1VFTWlTVkJLVmdEN2NLdHM9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJDVF9FViIsImN0cyI6Ik9BVVRIMl9TVEFURUxFU1NfR1JBTlQiLCJhdWRpdFRyYWNraW5nSWQiOiJkNDUyMjZmZi0yZjFjLTQzZmItYmM2Yi01MjllYjNiZWUwZjctMjA5NDk3Iiwic3VibmFtZSI6IkNUX0VWIiwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5zdGcudG95b3RhZHJpdmVyc2xvZ2luLmNvbS9vYXV0aDIvcmVhbG1zL3Jvb3QvcmVhbG1zL3RtbmEtbmF0aXZlIiwidG9rZW5OYW1lIjoiYWNjZXNzX3Rva2VuIiwidG9rZW5fdHlwZSI6IkJlYXJlciIsImF1dGhHcmFudElkIjoiaUdISG5HRllsaGRBQnFCR1lfNlVCTk1yb2lBIiwiYXVkIjoiQ1RfRVYiLCJuYmYiOjE3NTI2ODQ2NjAsImdyYW50X3R5cGUiOiJjbGllbnRfY3JlZGVudGlhbHMiLCJzY29wZSI6WyJyZWFkIl0sImF1dGhfdGltZSI6MTc1MjY4NDY2MCwicmVhbG0iOiIvdG1uYS1uYXRpdmUiLCJleHAiOjE3NTI2ODY0NjAsImlhdCI6MTc1MjY4NDY2MCwiZXhwaXJlc19pbiI6MTgwMCwianRpIjoiMjlacWsydEw0aDBGN2QzeDE3ZXl0ZExyUFdNIn0.lc0bz5ivt4otOwBtrUFpiQNsdcCHRtfpFSDSUmKx3DzWai9puQkgyrNMIpMu6jvsjh9XP7y8ejM02BhERF_fkm18_vK3iRZcNWG7ugcxCMXgAVIh6T6nU34D_8ea9swQYAaTTpJT_wNUB3v_0V62tl6xeZM0YhP2wLexi_kGINDg-5EzpXbEZkh7X9PcQqaB6hdvQSibq0GsachfVRc-fctu57KduDtFd1Yfn_xElyDEbpvos83whX2g50YNKTfZmXrOJ5UKRsMELGqwM5J3ZYFhVWMm-M4KK_Czcg7avxLx2AZSP03g5lMvrA1heFuy5WDFIFdR3ea83vqCAiGpRQ'"
+      },
+      "response": []
+    },
+    {
+      "name": "2.0- Delete PaymentMethodById- without passing guid",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.sendRequest({\r",
+              "    url: 'https://login.stg.toyotadriverslogin.com/oauth2/access_token?realm=%2Ftmna-native',\r",
+              "    method: 'POST',\r",
+              "    header: {\r",
+              "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+              "        'Authorization': 'Basic Y3RfZXY6TXVad2s4a25IQ1QyQUp5QQ=='\r",
+              "    },\r",
+              "    body: {\r",
+              "        mode: 'urlencoded',\r",
+              "        urlencoded: [\r",
+              "            { key: 'grant_type', value: 'client_credentials' }\r",
+              "        ]\r",
+              "    }\r",
+              "}, function (err, res) {\r",
+              "    if (err) {\r",
+              "        console.error('Token request failed:', err);\r",
+              "        return;\r",
+              "    }\r",
+              "\r",
+              "    const json = res.json();\r",
+              "\r",
+              "    if (!json.access_token) {\r",
+              "        console.error('No access_token in response:', json);\r",
+              "        return;\r",
+              "    }\r",
+              "\r",
+              "    // Set token in environment\r",
+              "    pm.environment.set('access_token', json.access_token);\r",
+              "\r",
+              "    console.log('Access token stored in environment');\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Delete non-default PM - HTTP success\", function () {\r",
+              " pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+              "});\r",
+              "// If response has JSON success message, validate it (safe parsing)\r",
+              "let bodyText = pm.response.text();\r",
+              "if (bodyText && bodyText.trim().startsWith(\"{\")) {\r",
+              " let json = pm.response.json();\r",
+              " const respCode = json?.status?.messages?.[0]?.responseCode;\r",
+              " if (respCode) {\r",
+              "   pm.test(\"responseCode is SUCCESS\", function () {\r",
+              "     pm.expect(respCode).to.eql(\"SUCCESS\");\r",
+              "   });\r",
+              " }\r",
+              "}\r",
+              "// Save deleted PM id (for Step 4: delete again -> not found)\r",
+              "pm.environment.set(\"deletedPmId\", pm.environment.get(\"nonDefaultPmId\"));\r",
+              "console.log(\"Deleted PM ID saved:\", pm.environment.get(\"deletedPmId\"));"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "X-GUID",
+            "value": "a3c62721fb8640bd9f016b5f24b1f60f",
+            "disabled": true
+          },
+          {
+            "key": "x-api-key",
+            "value": "7e7ecaf3d6ad8ae098083a5722da303d"
+          },
+          {
+            "key": "x-channel",
+            "value": "CT_EV"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/payment-method/{{nonDefaultPmId}}",
+          "protocol": "https",
+          "host": [
+            "ctp-secure-int",
+            "stg-telematicsct",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "payment",
+            "toyotapay",
+            "wallet",
+            "payment-method",
+            "{{nonDefaultPmId}}"
+          ]
+        },
+        "description": "Generated from cURL: curl --location --request DELETE 'https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/payment-method/8adcd9928193c0a10181969602391df6' \\\r\n--header 'X-GUID: b666ea4fe74844e980191472f7f884f6' \\\r\n--header 'x-api-key: 7e7ecaf3d6ad8ae098083a5722da303d' \\\r\n--header 'x-channel: CT_EV' \\\r\n--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJKUU40WjJ1Vm54V1VFTWlTVkJLVmdEN2NLdHM9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJDVF9FViIsImN0cyI6Ik9BVVRIMl9TVEFURUxFU1NfR1JBTlQiLCJhdWRpdFRyYWNraW5nSWQiOiJkNDUyMjZmZi0yZjFjLTQzZmItYmM2Yi01MjllYjNiZWUwZjctMjA5NDk3Iiwic3VibmFtZSI6IkNUX0VWIiwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5zdGcudG95b3RhZHJpdmVyc2xvZ2luLmNvbS9vYXV0aDIvcmVhbG1zL3Jvb3QvcmVhbG1zL3RtbmEtbmF0aXZlIiwidG9rZW5OYW1lIjoiYWNjZXNzX3Rva2VuIiwidG9rZW5fdHlwZSI6IkJlYXJlciIsImF1dGhHcmFudElkIjoiaUdISG5HRllsaGRBQnFCR1lfNlVCTk1yb2lBIiwiYXVkIjoiQ1RfRVYiLCJuYmYiOjE3NTI2ODQ2NjAsImdyYW50X3R5cGUiOiJjbGllbnRfY3JlZGVudGlhbHMiLCJzY29wZSI6WyJyZWFkIl0sImF1dGhfdGltZSI6MTc1MjY4NDY2MCwicmVhbG0iOiIvdG1uYS1uYXRpdmUiLCJleHAiOjE3NTI2ODY0NjAsImlhdCI6MTc1MjY4NDY2MCwiZXhwaXJlc19pbiI6MTgwMCwianRpIjoiMjlacWsydEw0aDBGN2QzeDE3ZXl0ZExyUFdNIn0.lc0bz5ivt4otOwBtrUFpiQNsdcCHRtfpFSDSUmKx3DzWai9puQkgyrNMIpMu6jvsjh9XP7y8ejM02BhERF_fkm18_vK3iRZcNWG7ugcxCMXgAVIh6T6nU34D_8ea9swQYAaTTpJT_wNUB3v_0V62tl6xeZM0YhP2wLexi_kGINDg-5EzpXbEZkh7X9PcQqaB6hdvQSibq0GsachfVRc-fctu57KduDtFd1Yfn_xElyDEbpvos83whX2g50YNKTfZmXrOJ5UKRsMELGqwM5J3ZYFhVWMm-M4KK_Czcg7avxLx2AZSP03g5lMvrA1heFuy5WDFIFdR3ea83vqCAiGpRQ'"
+      },
+      "response": []
+    },
+    {
+      "name": "2.0- Delete PaymentMethodById - Not a default PM",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.sendRequest({\r",
+              "    url: 'https://login.stg.toyotadriverslogin.com/oauth2/access_token?realm=%2Ftmna-native',\r",
+              "    method: 'POST',\r",
+              "    header: {\r",
+              "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+              "        'Authorization': 'Basic Y3RfZXY6TXVad2s4a25IQ1QyQUp5QQ=='\r",
+              "    },\r",
+              "    body: {\r",
+              "        mode: 'urlencoded',\r",
+              "        urlencoded: [\r",
+              "            { key: 'grant_type', value: 'client_credentials' }\r",
+              "        ]\r",
+              "    }\r",
+              "}, function (err, res) {\r",
+              "    if (err) {\r",
+              "        console.error('Token request failed:', err);\r",
+              "        return;\r",
+              "    }\r",
+              "\r",
+              "    const json = res.json();\r",
+              "\r",
+              "    if (!json.access_token) {\r",
+              "        console.error('No access_token in response:', json);\r",
+              "        return;\r",
+              "    }\r",
+              "\r",
+              "    // Set token in environment\r",
+              "    pm.environment.set('access_token', json.access_token);\r",
+              "\r",
+              "    console.log('Access token stored in environment');\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Delete non-default PM - HTTP success\", function () {\r",
+              " pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+              "});\r",
+              "// If response has JSON success message, validate it (safe parsing)\r",
+              "let bodyText = pm.response.text();\r",
+              "if (bodyText && bodyText.trim().startsWith(\"{\")) {\r",
+              " let json = pm.response.json();\r",
+              " const respCode = json?.status?.messages?.[0]?.responseCode;\r",
+              " if (respCode) {\r",
+              "   pm.test(\"responseCode is SUCCESS\", function () {\r",
+              "     pm.expect(respCode).to.eql(\"SUCCESS\");\r",
+              "   });\r",
+              " }\r",
+              "}\r",
+              "// Save deleted PM id (for Step 4: delete again -> not found)\r",
+              "pm.environment.set(\"deletedPmId\", pm.environment.get(\"nonDefaultPmId\"));\r",
+              "console.log(\"Deleted PM ID saved:\", pm.environment.get(\"deletedPmId\"));"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "X-GUID",
+            "value": "a3c62721fb8640bd9f016b5f24b1f60f"
+          },
+          {
+            "key": "x-api-key",
+            "value": "7e7ecaf3d6ad8ae098083a5722da303d"
+          },
+          {
+            "key": "x-channel",
+            "value": "CT_EV"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/payment-method/{{nonDefaultPm1}}",
+          "protocol": "https",
+          "host": [
+            "ctp-secure-int",
+            "stg-telematicsct",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "payment",
+            "toyotapay",
+            "wallet",
+            "payment-method",
+            "{{nonDefaultPm1}}"
+          ]
+        },
+        "description": "Generated from cURL: curl --location --request DELETE 'https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/payment-method/8adcd9928193c0a10181969602391df6' \\\r\n--header 'X-GUID: b666ea4fe74844e980191472f7f884f6' \\\r\n--header 'x-api-key: 7e7ecaf3d6ad8ae098083a5722da303d' \\\r\n--header 'x-channel: CT_EV' \\\r\n--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJKUU40WjJ1Vm54V1VFTWlTVkJLVmdEN2NLdHM9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJDVF9FViIsImN0cyI6Ik9BVVRIMl9TVEFURUxFU1NfR1JBTlQiLCJhdWRpdFRyYWNraW5nSWQiOiJkNDUyMjZmZi0yZjFjLTQzZmItYmM2Yi01MjllYjNiZWUwZjctMjA5NDk3Iiwic3VibmFtZSI6IkNUX0VWIiwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5zdGcudG95b3RhZHJpdmVyc2xvZ2luLmNvbS9vYXV0aDIvcmVhbG1zL3Jvb3QvcmVhbG1zL3RtbmEtbmF0aXZlIiwidG9rZW5OYW1lIjoiYWNjZXNzX3Rva2VuIiwidG9rZW5fdHlwZSI6IkJlYXJlciIsImF1dGhHcmFudElkIjoiaUdISG5HRllsaGRBQnFCR1lfNlVCTk1yb2lBIiwiYXVkIjoiQ1RfRVYiLCJuYmYiOjE3NTI2ODQ2NjAsImdyYW50X3R5cGUiOiJjbGllbnRfY3JlZGVudGlhbHMiLCJzY29wZSI6WyJyZWFkIl0sImF1dGhfdGltZSI6MTc1MjY4NDY2MCwicmVhbG0iOiIvdG1uYS1uYXRpdmUiLCJleHAiOjE3NTI2ODY0NjAsImlhdCI6MTc1MjY4NDY2MCwiZXhwaXJlc19pbiI6MTgwMCwianRpIjoiMjlacWsydEw0aDBGN2QzeDE3ZXl0ZExyUFdNIn0.lc0bz5ivt4otOwBtrUFpiQNsdcCHRtfpFSDSUmKx3DzWai9puQkgyrNMIpMu6jvsjh9XP7y8ejM02BhERF_fkm18_vK3iRZcNWG7ugcxCMXgAVIh6T6nU34D_8ea9swQYAaTTpJT_wNUB3v_0V62tl6xeZM0YhP2wLexi_kGINDg-5EzpXbEZkh7X9PcQqaB6hdvQSibq0GsachfVRc-fctu57KduDtFd1Yfn_xElyDEbpvos83whX2g50YNKTfZmXrOJ5UKRsMELGqwM5J3ZYFhVWMm-M4KK_Czcg7avxLx2AZSP03g5lMvrA1heFuy5WDFIFdR3ea83vqCAiGpRQ'"
+      },
+      "response": []
+    },
+    {
+      "name": "2.0- Delete PaymentMethodById- Default PM",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.sendRequest({\r",
+              "    url: 'https://login.stg.toyotadriverslogin.com/oauth2/access_token?realm=%2Ftmna-native',\r",
+              "    method: 'POST',\r",
+              "    header: {\r",
+              "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+              "        'Authorization': 'Basic Y3RfZXY6TXVad2s4a25IQ1QyQUp5QQ=='\r",
+              "    },\r",
+              "    body: {\r",
+              "        mode: 'urlencoded',\r",
+              "        urlencoded: [\r",
+              "            { key: 'grant_type', value: 'client_credentials' }\r",
+              "        ]\r",
+              "    }\r",
+              "}, function (err, res) {\r",
+              "    if (err) {\r",
+              "        console.error('Token request failed:', err);\r",
+              "        return;\r",
+              "    }\r",
+              "\r",
+              "    const json = res.json();\r",
+              "\r",
+              "    if (!json.access_token) {\r",
+              "        console.error('No access_token in response:', json);\r",
+              "        return;\r",
+              "    }\r",
+              "\r",
+              "    // Set token in environment\r",
+              "    pm.environment.set('access_token', json.access_token);\r",
+              "\r",
+              "    console.log('Access token stored in environment');\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Delete non-default PM - HTTP success\", function () {\r",
+              " pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+              "});\r",
+              "// If response has JSON success message, validate it (safe parsing)\r",
+              "let bodyText = pm.response.text();\r",
+              "if (bodyText && bodyText.trim().startsWith(\"{\")) {\r",
+              " let json = pm.response.json();\r",
+              " const respCode = json?.status?.messages?.[0]?.responseCode;\r",
+              " if (respCode) {\r",
+              "   pm.test(\"responseCode is SUCCESS\", function () {\r",
+              "     pm.expect(respCode).to.eql(\"SUCCESS\");\r",
+              "   });\r",
+              " }\r",
+              "}\r",
+              "// Save deleted PM id (for Step 4: delete again -> not found)\r",
+              "pm.environment.set(\"deletedPmId\", pm.environment.get(\"nonDefaultPmId\"));\r",
+              "console.log(\"Deleted PM ID saved:\", pm.environment.get(\"deletedPmId\"));"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "X-GUID",
+            "value": "a3c62721fb8640bd9f016b5f24b1f60f"
+          },
+          {
+            "key": "x-api-key",
+            "value": "7e7ecaf3d6ad8ae098083a5722da303d"
+          },
+          {
+            "key": "x-channel",
+            "value": "CT_EV"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/payment-method/8adc911392bdc70a0192c02e4ab86b90",
+          "protocol": "https",
+          "host": [
+            "ctp-secure-int",
+            "stg-telematicsct",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "payment",
+            "toyotapay",
+            "wallet",
+            "payment-method",
+            "8adc911392bdc70a0192c02e4ab86b90"
+          ]
+        },
+        "description": "Generated from cURL: curl --location --request DELETE 'https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/payment-method/8adcd9928193c0a10181969602391df6' \\\r\n--header 'X-GUID: b666ea4fe74844e980191472f7f884f6' \\\r\n--header 'x-api-key: 7e7ecaf3d6ad8ae098083a5722da303d' \\\r\n--header 'x-channel: CT_EV' \\\r\n--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJKUU40WjJ1Vm54V1VFTWlTVkJLVmdEN2NLdHM9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJDVF9FViIsImN0cyI6Ik9BVVRIMl9TVEFURUxFU1NfR1JBTlQiLCJhdWRpdFRyYWNraW5nSWQiOiJkNDUyMjZmZi0yZjFjLTQzZmItYmM2Yi01MjllYjNiZWUwZjctMjA5NDk3Iiwic3VibmFtZSI6IkNUX0VWIiwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5zdGcudG95b3RhZHJpdmVyc2xvZ2luLmNvbS9vYXV0aDIvcmVhbG1zL3Jvb3QvcmVhbG1zL3RtbmEtbmF0aXZlIiwidG9rZW5OYW1lIjoiYWNjZXNzX3Rva2VuIiwidG9rZW5fdHlwZSI6IkJlYXJlciIsImF1dGhHcmFudElkIjoiaUdISG5HRllsaGRBQnFCR1lfNlVCTk1yb2lBIiwiYXVkIjoiQ1RfRVYiLCJuYmYiOjE3NTI2ODQ2NjAsImdyYW50X3R5cGUiOiJjbGllbnRfY3JlZGVudGlhbHMiLCJzY29wZSI6WyJyZWFkIl0sImF1dGhfdGltZSI6MTc1MjY4NDY2MCwicmVhbG0iOiIvdG1uYS1uYXRpdmUiLCJleHAiOjE3NTI2ODY0NjAsImlhdCI6MTc1MjY4NDY2MCwiZXhwaXJlc19pbiI6MTgwMCwianRpIjoiMjlacWsydEw0aDBGN2QzeDE3ZXl0ZExyUFdNIn0.lc0bz5ivt4otOwBtrUFpiQNsdcCHRtfpFSDSUmKx3DzWai9puQkgyrNMIpMu6jvsjh9XP7y8ejM02BhERF_fkm18_vK3iRZcNWG7ugcxCMXgAVIh6T6nU34D_8ea9swQYAaTTpJT_wNUB3v_0V62tl6xeZM0YhP2wLexi_kGINDg-5EzpXbEZkh7X9PcQqaB6hdvQSibq0GsachfVRc-fctu57KduDtFd1Yfn_xElyDEbpvos83whX2g50YNKTfZmXrOJ5UKRsMELGqwM5J3ZYFhVWMm-M4KK_Czcg7avxLx2AZSP03g5lMvrA1heFuy5WDFIFdR3ea83vqCAiGpRQ'"
+      },
+      "response": []
+    },
+    {
+      "name": "2.0- Delete PaymentMethodById - Default with No Active Subscription",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.sendRequest({\r",
+              "    url: 'https://login.stg.toyotadriverslogin.com/oauth2/access_token?realm=%2Ftmna-native',\r",
+              "    method: 'POST',\r",
+              "    header: {\r",
+              "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+              "        'Authorization': 'Basic Y3RfZXY6TXVad2s4a25IQ1QyQUp5QQ=='\r",
+              "    },\r",
+              "    body: {\r",
+              "        mode: 'urlencoded',\r",
+              "        urlencoded: [\r",
+              "            { key: 'grant_type', value: 'client_credentials' }\r",
+              "        ]\r",
+              "    }\r",
+              "}, function (err, res) {\r",
+              "    if (err) {\r",
+              "        console.error('Token request failed:', err);\r",
+              "        return;\r",
+              "    }\r",
+              "\r",
+              "    const json = res.json();\r",
+              "\r",
+              "    if (!json.access_token) {\r",
+              "        console.error('No access_token in response:', json);\r",
+              "        return;\r",
+              "    }\r",
+              "\r",
+              "    // Set token in environment\r",
+              "    pm.environment.set('access_token', json.access_token);\r",
+              "\r",
+              "    console.log('Access token stored in environment');\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Delete non-default PM - HTTP success\", function () {\r",
+              " pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+              "});\r",
+              "// If response has JSON success message, validate it (safe parsing)\r",
+              "let bodyText = pm.response.text();\r",
+              "if (bodyText && bodyText.trim().startsWith(\"{\")) {\r",
+              " let json = pm.response.json();\r",
+              " const respCode = json?.status?.messages?.[0]?.responseCode;\r",
+              " if (respCode) {\r",
+              "   pm.test(\"responseCode is SUCCESS\", function () {\r",
+              "     pm.expect(respCode).to.eql(\"SUCCESS\");\r",
+              "   });\r",
+              " }\r",
+              "}\r",
+              "// Save deleted PM id (for Step 4: delete again -> not found)\r",
+              "pm.environment.set(\"deletedPmId\", pm.environment.get(\"nonDefaultPmId\"));\r",
+              "console.log(\"Deleted PM ID saved:\", pm.environment.get(\"deletedPmId\"));"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "X-GUID",
+            "value": "a3c62721fb8640bd9f016b5f24b1f60f"
+          },
+          {
+            "key": "x-api-key",
+            "value": "7e7ecaf3d6ad8ae098083a5722da303d"
+          },
+          {
+            "key": "x-channel",
+            "value": "CT_EV"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/payment-method/{{nonDefaultPmId}}",
+          "protocol": "https",
+          "host": [
+            "ctp-secure-int",
+            "stg-telematicsct",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "payment",
+            "toyotapay",
+            "wallet",
+            "payment-method",
+            "{{nonDefaultPmId}}"
+          ]
+        },
+        "description": "Generated from cURL: curl --location --request DELETE 'https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/payment-method/8adcd9928193c0a10181969602391df6' \\\r\n--header 'X-GUID: b666ea4fe74844e980191472f7f884f6' \\\r\n--header 'x-api-key: 7e7ecaf3d6ad8ae098083a5722da303d' \\\r\n--header 'x-channel: CT_EV' \\\r\n--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJKUU40WjJ1Vm54V1VFTWlTVkJLVmdEN2NLdHM9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJDVF9FViIsImN0cyI6Ik9BVVRIMl9TVEFURUxFU1NfR1JBTlQiLCJhdWRpdFRyYWNraW5nSWQiOiJkNDUyMjZmZi0yZjFjLTQzZmItYmM2Yi01MjllYjNiZWUwZjctMjA5NDk3Iiwic3VibmFtZSI6IkNUX0VWIiwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5zdGcudG95b3RhZHJpdmVyc2xvZ2luLmNvbS9vYXV0aDIvcmVhbG1zL3Jvb3QvcmVhbG1zL3RtbmEtbmF0aXZlIiwidG9rZW5OYW1lIjoiYWNjZXNzX3Rva2VuIiwidG9rZW5fdHlwZSI6IkJlYXJlciIsImF1dGhHcmFudElkIjoiaUdISG5HRllsaGRBQnFCR1lfNlVCTk1yb2lBIiwiYXVkIjoiQ1RfRVYiLCJuYmYiOjE3NTI2ODQ2NjAsImdyYW50X3R5cGUiOiJjbGllbnRfY3JlZGVudGlhbHMiLCJzY29wZSI6WyJyZWFkIl0sImF1dGhfdGltZSI6MTc1MjY4NDY2MCwicmVhbG0iOiIvdG1uYS1uYXRpdmUiLCJleHAiOjE3NTI2ODY0NjAsImlhdCI6MTc1MjY4NDY2MCwiZXhwaXJlc19pbiI6MTgwMCwianRpIjoiMjlacWsydEw0aDBGN2QzeDE3ZXl0ZExyUFdNIn0.lc0bz5ivt4otOwBtrUFpiQNsdcCHRtfpFSDSUmKx3DzWai9puQkgyrNMIpMu6jvsjh9XP7y8ejM02BhERF_fkm18_vK3iRZcNWG7ugcxCMXgAVIh6T6nU34D_8ea9swQYAaTTpJT_wNUB3v_0V62tl6xeZM0YhP2wLexi_kGINDg-5EzpXbEZkh7X9PcQqaB6hdvQSibq0GsachfVRc-fctu57KduDtFd1Yfn_xElyDEbpvos83whX2g50YNKTfZmXrOJ5UKRsMELGqwM5J3ZYFhVWMm-M4KK_Czcg7avxLx2AZSP03g5lMvrA1heFuy5WDFIFdR3ea83vqCAiGpRQ'"
+      },
+      "response": []
+    },
+    {
+      "name": "2.0- Delete PaymentMethodById -  Active Subscription with only PM",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.sendRequest({\r",
+              "    url: 'https://login.stg.toyotadriverslogin.com/oauth2/access_token?realm=%2Ftmna-native',\r",
+              "    method: 'POST',\r",
+              "    header: {\r",
+              "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+              "        'Authorization': 'Basic Y3RfZXY6TXVad2s4a25IQ1QyQUp5QQ=='\r",
+              "    },\r",
+              "    body: {\r",
+              "        mode: 'urlencoded',\r",
+              "        urlencoded: [\r",
+              "            { key: 'grant_type', value: 'client_credentials' }\r",
+              "        ]\r",
+              "    }\r",
+              "}, function (err, res) {\r",
+              "    if (err) {\r",
+              "        console.error('Token request failed:', err);\r",
+              "        return;\r",
+              "    }\r",
+              "\r",
+              "    const json = res.json();\r",
+              "\r",
+              "    if (!json.access_token) {\r",
+              "        console.error('No access_token in response:', json);\r",
+              "        return;\r",
+              "    }\r",
+              "\r",
+              "    // Set token in environment\r",
+              "    pm.environment.set('access_token', json.access_token);\r",
+              "\r",
+              "    console.log('Access token stored in environment');\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Delete non-default PM - HTTP success\", function () {\r",
+              " pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+              "});\r",
+              "// If response has JSON success message, validate it (safe parsing)\r",
+              "let bodyText = pm.response.text();\r",
+              "if (bodyText && bodyText.trim().startsWith(\"{\")) {\r",
+              " let json = pm.response.json();\r",
+              " const respCode = json?.status?.messages?.[0]?.responseCode;\r",
+              " if (respCode) {\r",
+              "   pm.test(\"responseCode is SUCCESS\", function () {\r",
+              "     pm.expect(respCode).to.eql(\"SUCCESS\");\r",
+              "   });\r",
+              " }\r",
+              "}\r",
+              "// Save deleted PM id (for Step 4: delete again -> not found)\r",
+              "pm.environment.set(\"deletedPmId\", pm.environment.get(\"nonDefaultPmId\"));\r",
+              "console.log(\"Deleted PM ID saved:\", pm.environment.get(\"deletedPmId\"));"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "X-GUID",
+            "value": "a3c62721fb8640bd9f016b5f24b1f60f"
+          },
+          {
+            "key": "x-api-key",
+            "value": "7e7ecaf3d6ad8ae098083a5722da303d"
+          },
+          {
+            "key": "x-channel",
+            "value": "CT_EV"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/payment-method/{{nonDefaultPmId}}",
+          "protocol": "https",
+          "host": [
+            "ctp-secure-int",
+            "stg-telematicsct",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "payment",
+            "toyotapay",
+            "wallet",
+            "payment-method",
+            "{{nonDefaultPmId}}"
+          ]
+        },
+        "description": "Generated from cURL: curl --location --request DELETE 'https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/payment-method/8adcd9928193c0a10181969602391df6' \\\r\n--header 'X-GUID: b666ea4fe74844e980191472f7f884f6' \\\r\n--header 'x-api-key: 7e7ecaf3d6ad8ae098083a5722da303d' \\\r\n--header 'x-channel: CT_EV' \\\r\n--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJKUU40WjJ1Vm54V1VFTWlTVkJLVmdEN2NLdHM9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJDVF9FViIsImN0cyI6Ik9BVVRIMl9TVEFURUxFU1NfR1JBTlQiLCJhdWRpdFRyYWNraW5nSWQiOiJkNDUyMjZmZi0yZjFjLTQzZmItYmM2Yi01MjllYjNiZWUwZjctMjA5NDk3Iiwic3VibmFtZSI6IkNUX0VWIiwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5zdGcudG95b3RhZHJpdmVyc2xvZ2luLmNvbS9vYXV0aDIvcmVhbG1zL3Jvb3QvcmVhbG1zL3RtbmEtbmF0aXZlIiwidG9rZW5OYW1lIjoiYWNjZXNzX3Rva2VuIiwidG9rZW5fdHlwZSI6IkJlYXJlciIsImF1dGhHcmFudElkIjoiaUdISG5HRllsaGRBQnFCR1lfNlVCTk1yb2lBIiwiYXVkIjoiQ1RfRVYiLCJuYmYiOjE3NTI2ODQ2NjAsImdyYW50X3R5cGUiOiJjbGllbnRfY3JlZGVudGlhbHMiLCJzY29wZSI6WyJyZWFkIl0sImF1dGhfdGltZSI6MTc1MjY4NDY2MCwicmVhbG0iOiIvdG1uYS1uYXRpdmUiLCJleHAiOjE3NTI2ODY0NjAsImlhdCI6MTc1MjY4NDY2MCwiZXhwaXJlc19pbiI6MTgwMCwianRpIjoiMjlacWsydEw0aDBGN2QzeDE3ZXl0ZExyUFdNIn0.lc0bz5ivt4otOwBtrUFpiQNsdcCHRtfpFSDSUmKx3DzWai9puQkgyrNMIpMu6jvsjh9XP7y8ejM02BhERF_fkm18_vK3iRZcNWG7ugcxCMXgAVIh6T6nU34D_8ea9swQYAaTTpJT_wNUB3v_0V62tl6xeZM0YhP2wLexi_kGINDg-5EzpXbEZkh7X9PcQqaB6hdvQSibq0GsachfVRc-fctu57KduDtFd1Yfn_xElyDEbpvos83whX2g50YNKTfZmXrOJ5UKRsMELGqwM5J3ZYFhVWMm-M4KK_Czcg7avxLx2AZSP03g5lMvrA1heFuy5WDFIFdR3ea83vqCAiGpRQ'"
+      },
+      "response": []
+    },
+    {
+      "name": "2.0- Delete PaymentMethodById - Active Subscription with multiple PM",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.sendRequest({\r",
+              "    url: 'https://login.stg.toyotadriverslogin.com/oauth2/access_token?realm=%2Ftmna-native',\r",
+              "    method: 'POST',\r",
+              "    header: {\r",
+              "        'Content-Type': 'application/x-www-form-urlencoded',\r",
+              "        'Authorization': 'Basic Y3RfZXY6TXVad2s4a25IQ1QyQUp5QQ=='\r",
+              "    },\r",
+              "    body: {\r",
+              "        mode: 'urlencoded',\r",
+              "        urlencoded: [\r",
+              "            { key: 'grant_type', value: 'client_credentials' }\r",
+              "        ]\r",
+              "    }\r",
+              "}, function (err, res) {\r",
+              "    if (err) {\r",
+              "        console.error('Token request failed:', err);\r",
+              "        return;\r",
+              "    }\r",
+              "\r",
+              "    const json = res.json();\r",
+              "\r",
+              "    if (!json.access_token) {\r",
+              "        console.error('No access_token in response:', json);\r",
+              "        return;\r",
+              "    }\r",
+              "\r",
+              "    // Set token in environment\r",
+              "    pm.environment.set('access_token', json.access_token);\r",
+              "\r",
+              "    console.log('Access token stored in environment');\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Delete non-default PM - HTTP success\", function () {\r",
+              " pm.expect(pm.response.code).to.be.oneOf([200, 204]);\r",
+              "});\r",
+              "// If response has JSON success message, validate it (safe parsing)\r",
+              "let bodyText = pm.response.text();\r",
+              "if (bodyText && bodyText.trim().startsWith(\"{\")) {\r",
+              " let json = pm.response.json();\r",
+              " const respCode = json?.status?.messages?.[0]?.responseCode;\r",
+              " if (respCode) {\r",
+              "   pm.test(\"responseCode is SUCCESS\", function () {\r",
+              "     pm.expect(respCode).to.eql(\"SUCCESS\");\r",
+              "   });\r",
+              " }\r",
+              "}\r",
+              "// Save deleted PM id (for Step 4: delete again -> not found)\r",
+              "pm.environment.set(\"deletedPmId\", pm.environment.get(\"nonDefaultPmId\"));\r",
+              "console.log(\"Deleted PM ID saved:\", pm.environment.get(\"deletedPmId\"));"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "X-GUID",
+            "value": "a3c62721fb8640bd9f016b5f24b1f60f"
+          },
+          {
+            "key": "x-api-key",
+            "value": "7e7ecaf3d6ad8ae098083a5722da303d"
+          },
+          {
+            "key": "x-channel",
+            "value": "CT_EV"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/payment-method/{{nonDefaultPmId}}",
+          "protocol": "https",
+          "host": [
+            "ctp-secure-int",
+            "stg-telematicsct",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "payment",
+            "toyotapay",
+            "wallet",
+            "payment-method",
+            "{{nonDefaultPmId}}"
+          ]
+        },
+        "description": "Generated from cURL: curl --location --request DELETE 'https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/payment-method/8adcd9928193c0a10181969602391df6' \\\r\n--header 'X-GUID: b666ea4fe74844e980191472f7f884f6' \\\r\n--header 'x-api-key: 7e7ecaf3d6ad8ae098083a5722da303d' \\\r\n--header 'x-channel: CT_EV' \\\r\n--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJKUU40WjJ1Vm54V1VFTWlTVkJLVmdEN2NLdHM9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJDVF9FViIsImN0cyI6Ik9BVVRIMl9TVEFURUxFU1NfR1JBTlQiLCJhdWRpdFRyYWNraW5nSWQiOiJkNDUyMjZmZi0yZjFjLTQzZmItYmM2Yi01MjllYjNiZWUwZjctMjA5NDk3Iiwic3VibmFtZSI6IkNUX0VWIiwiaXNzIjoiaHR0cHM6Ly9sb2dpbi5zdGcudG95b3RhZHJpdmVyc2xvZ2luLmNvbS9vYXV0aDIvcmVhbG1zL3Jvb3QvcmVhbG1zL3RtbmEtbmF0aXZlIiwidG9rZW5OYW1lIjoiYWNjZXNzX3Rva2VuIiwidG9rZW5fdHlwZSI6IkJlYXJlciIsImF1dGhHcmFudElkIjoiaUdISG5HRllsaGRBQnFCR1lfNlVCTk1yb2lBIiwiYXVkIjoiQ1RfRVYiLCJuYmYiOjE3NTI2ODQ2NjAsImdyYW50X3R5cGUiOiJjbGllbnRfY3JlZGVudGlhbHMiLCJzY29wZSI6WyJyZWFkIl0sImF1dGhfdGltZSI6MTc1MjY4NDY2MCwicmVhbG0iOiIvdG1uYS1uYXRpdmUiLCJleHAiOjE3NTI2ODY0NjAsImlhdCI6MTc1MjY4NDY2MCwiZXhwaXJlc19pbiI6MTgwMCwianRpIjoiMjlacWsydEw0aDBGN2QzeDE3ZXl0ZExyUFdNIn0.lc0bz5ivt4otOwBtrUFpiQNsdcCHRtfpFSDSUmKx3DzWai9puQkgyrNMIpMu6jvsjh9XP7y8ejM02BhERF_fkm18_vK3iRZcNWG7ugcxCMXgAVIh6T6nU34D_8ea9swQYAaTTpJT_wNUB3v_0V62tl6xeZM0YhP2wLexi_kGINDg-5EzpXbEZkh7X9PcQqaB6hdvQSibq0GsachfVRc-fctu57KduDtFd1Yfn_xElyDEbpvos83whX2g50YNKTfZmXrOJ5UKRsMELGqwM5J3ZYFhVWMm-M4KK_Czcg7avxLx2AZSP03g5lMvrA1heFuy5WDFIFdR3ea83vqCAiGpRQ'"
+      },
+      "response": []
+    },
+    {
+      "name": "https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/payment-method/8adcd4699c327608019c433417de59cc%27 \\\n--header X-GUID:",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "x-Channel",
+            "value": "{{x-channel1}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/payment-method/8adcd4699c327608019c433417de59cc",
+          "protocol": "https",
+          "host": [
+            "ctp-secure-int",
+            "stg-telematicsct",
+            "com"
+          ],
+          "path": [
+            "v1",
+            "payment",
+            "toyotapay",
+            "wallet",
+            "payment-method",
+            "8adcd4699c327608019c433417de59cc"
+          ]
+        },
+        "description": "Generated from cURL: curl --location --request DELETE 'https://ctp-secure-int.stg-telematicsct.com/v1/payment/toyotapay/wallet/payment-method/8adcd4699c327608019c433417de59cc%27 \\\n--header 'X-GUID: e838b1b186b642b18eddc57a9eace0e6' \\\n--header 'x-api-key: 7e7ecaf3d6ad8ae098083a5722da303d' \\\n--header 'x-channel: TC_AGENT' \\\n--header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJraWQiOiJKUU40WjJ1Vm54V1VFTWlTVkJLVmdEN2NLdHM9IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiJ0Y19hZ2VudCIsImN0cyI6Ik9BVVRIMl9TVEFURUxFU1NfR1JBTlQiLCJhdWRpdFRyYWNraW5nSWQiOiI3YjliNzA0Ni0zZjExLTRhODEtYWEzMy02NTQyYTAzNzE3NTUtNjY3MzMwMjIiLCJzdWJuYW1lIjoidGNfYWdlbnQiLCJpc3MiOiJodHRwczovL2xvZ2luLnN0Zy50b3lvdGFkcml2ZXJzbG9naW4uY29tL29hdXRoMi9yZWFsbXMvcm9vdC9yZWFsbXMvdG1uYS1uYXRpdmUiLCJ0b2tlbk5hbWUiOiJhY2Nlc3NfdG9rZW4iLCJ0b2tlbl90eXBlIjoiQmVhcmVyIiwiYXV0aEdyYW50SWQiOiJLQWE3VDlXY1hRN3VTVm9MWjlEM3lXNUtLYVkiLCJhdWQiOiJ0Y19hZ2VudCIsIm5iZiI6MTc3MDc2MDExMywiZ3JhbnRfdHlwZSI6ImNsaWVudF9jcmVkZW50aWFscyIsInNjb3BlIjpbInJlYWQiXSwiYXV0aF90aW1lIjoxNzcwNzYwMTEzLCJyZWFsbSI6Ii90bW5hLW5hdGl2ZSIsImV4cCI6MTc3MDc2MTkxMywiaWF0IjoxNzcwNzYwMTEzLCJleHBpcmVzX2luIjoxODAwLCJqdGkiOiJ2S3hqNndZY2dkdDA0LVV0WVlpbF9LMlZEU0UifQ.e58kh9PF85r8LnK3qqFF658sGeVWRuXq80o1W1d6pVxBFKFX52-OrPhhWXzyhbHNW7TWdpsRWrKxWsxBjAUVlve4Kkmc8m3U_i2NJZopFldYj9NxE5XlV40tm8AD6UefxWfS-IOPHKhG0Zew_P3jLj01Dd06gHQnojqZE3tOs8eLFnhfOMH0ItmkCpDsto8hd-9XTHZfEqekLyv9sjn3gU8cmPyXDmVfCFkx1TbBUuI3yizAEOeBfr8jW-eAy3Sgo8WS3MLIDCIuZX3VbhbeAXdffEbnP5dIVpzhXwwJnCpzZ3NY5xzwYvlv4AFb8gGaRKKf8dYsov1W9872h0YuCA'"
+      },
+      "response": []
+    }
+  ]
+}

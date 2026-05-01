@@ -1,0 +1,1436 @@
+{
+  "info": {
+    "_postman_id": "71413f6d-92ed-4791-b1db-579b9f795bad",
+    "name": "TFS-V2",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "42440020"
+  },
+  "item": [
+    {
+      "name": "TFS-OAuth",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "type": "text",
+              "key": "grant_type",
+              "value": "client_credentials"
+            },
+            {
+              "type": "text",
+              "key": "client_id",
+              "value": "4f55349153a44d6097ac237ad4a612c7"
+            },
+            {
+              "type": "text",
+              "key": "client_secret",
+              "value": "5450Bc2c569749839917908AD9440f35"
+            }
+          ]
+        },
+        "url": {
+          "raw": "https://tftpconnectputest.tfsglobalservices.com/oauth/token",
+          "protocol": "https",
+          "host": [
+            "tftpconnectputest",
+            "tfsglobalservices",
+            "com"
+          ],
+          "path": [
+            "oauth",
+            "token"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create-Account",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.sendRequest({\r",
+              "    url: 'https://tftpconnectputest.tfsglobalservices.com/oauth/token',\r",
+              "    method: 'POST',\r",
+              "    header: {\r",
+              "        'Content-Type': 'application/x-www-form-urlencoded'\r",
+              "    },\r",
+              "    body: {\r",
+              "        mode: 'urlencoded',\r",
+              "        urlencoded: [\r",
+              "            { key: 'grant_type', value: 'client_credentials' },\r",
+              "            { key: 'client_id', value: '4f55349153a44d6097ac237ad4a612c7' },\r",
+              "            { key: 'client_secret', value: '5450Bc2c569749839917908AD9440f35' }\r",
+              "        ]\r",
+              "    }\r",
+              "}, function (err, res) {\r",
+              "    if (err) {\r",
+              "        console.log('Token request error:', err);\r",
+              "    } else {\r",
+              "        var jsonResponse = res.json();\r",
+              "        // Assuming the token is in jsonResponse.access_token\r",
+              "        pm.environment.set('access_token', jsonResponse.access_token);\r",
+              "        console.log('Access token set in environment variable');\r",
+              "    }\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tfsaccess_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-channel",
+            "value": "CTP"
+          },
+          {
+            "key": "x-correlation-id",
+            "value": ""
+          },
+          {
+            "key": "x-tenant-id",
+            "value": "WEB"
+          },
+          {
+            "key": "x-timestamp",
+            "value": ""
+          },
+          {
+            "key": "x-toyotapay-id",
+            "value": "ec2f2a55-c784-4ff7-9afe-494afb3d2490"
+          },
+          {
+            "key": "x-environment",
+            "value": "SBX5"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer jYZ7C6STjd9lTJTAC2NrJWRQ3NcTwkgw4NMbIp-AeeBupTPJDEOuS8wMuHUpDF5hfT6Qe8bHEPIWYDD2FVNCXg"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customer_id\": \"85fec98455bb46a5999356c080f16fb7\",\n  \"currency\": \"USD\",\n  \"batch\": \"Batch1\",\n  \"bill_cycle_day\": 0,\n  \"name\": \"Telematics Account\",\n  \"description\": \"This is a business account.\",\n  \"payment_gateway\": \"TMNA Servco Telematics-Chase\",\n  \"payment_terms\": \"Due Upon Receipt\",\n  \"sequence_set_id\": \"\",\n  \"auto_pay\": false,\n  \"bill_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"sold_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"tax_certificate\": {\n    \"company_code\": \"\",\n    \"start_date\": \"2023-03-03\",\n    \"exempt_expiration_date\": \"2023-06-08\",\n    \"exempt_status\": \"No\",\n    \"issuing_jurisdiction\": \"\"\n  },\n  \"custom_fields\": {\n    \"channel__c\": \"IVR\",\n    \"customerName__c\": \"\",\n    \"upid__c\": \"\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts",
+          "protocol": "https",
+          "host": [
+            "tftpconnectpustg",
+            "tfsglobalservices",
+            "com"
+          ],
+          "path": [
+            "v2",
+            "account-services",
+            "accounts"
+          ]
+        },
+        "description": "Generated from cURL: curl --location 'https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts' \\\n--header 'x-channel: IVR' \\\n--header 'x-correlation-id;' \\\n--header 'x-tenant-id;' \\\n--header 'x-timestamp;' \\\n--header 'x-toyotapay-id: ec2f2a55-c784-4ff7-9afe-494afb3d2490' \\\n--header 'x-environment: SBX3' \\\n--header 'Content-Type: application/json' \\\n--header 'Authorization: Bearer jYZ7C6STjd9lTJTAC2NrJWRQ3NcTwkgw4NMbIp-AeeBupTPJDEOuS8wMuHUpDF5hfT6Qe8bHEPIWYDD2FVNCXg' \\\n--data-raw '{\n  \"customer_id\": \"955963437fce498da98efc7e53bb2f31\",\n  \"currency\": \"USD\",\n  \"batch\": \"Batch1\",\n  \"bill_cycle_day\": 0,\n  \"name\": \"Telematics Account\",\n  \"description\": \"This is a business account.\",\n  \"payment_gateway\": \"TMNA Servco Telematics-Chase\",\n  \"payment_terms\": \"Due Upon Receipt\",\n  \"sequence_set_id\": \"\",\n  \"auto_pay\": false,\n  \"bill_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"sold_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"tax_certificate\": {\n    \"company_code\": \"\",\n    \"start_date\": \"2023-03-03\",\n    \"exempt_expiration_date\": \"2023-06-08\",\n    \"exempt_status\": \"No\",\n    \"issuing_jurisdiction\": \"\"\n  },\n  \"custom_fields\": {\n    \"channel__c\": \"IVR\",\n    \"customerName__c\": \"\",\n    \"upid__c\": \"\"\n  }\n}'"
+      },
+      "response": []
+    },
+    {
+      "name": "Create-Account Copy",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.sendRequest({\r",
+              "    url: 'https://tftpconnectputest.tfsglobalservices.com/oauth/token',\r",
+              "    method: 'POST',\r",
+              "    header: {\r",
+              "        'Content-Type': 'application/x-www-form-urlencoded'\r",
+              "    },\r",
+              "    body: {\r",
+              "        mode: 'urlencoded',\r",
+              "        urlencoded: [\r",
+              "            { key: 'grant_type', value: 'client_credentials' },\r",
+              "            { key: 'client_id', value: '4f55349153a44d6097ac237ad4a612c7' },\r",
+              "            { key: 'client_secret', value: '5450Bc2c569749839917908AD9440f35' }\r",
+              "        ]\r",
+              "    }\r",
+              "}, function (err, res) {\r",
+              "    if (err) {\r",
+              "        console.log('Token request error:', err);\r",
+              "    } else {\r",
+              "        var jsonResponse = res.json();\r",
+              "        // Assuming the token is in jsonResponse.access_token\r",
+              "        pm.environment.set('tfsaccess_token', jsonResponse.access_token);\r",
+              "        console.log('Access token set in environment variable');\r",
+              "    }\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tfsaccess_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "x-channel",
+            "value": "CTP"
+          },
+          {
+            "key": "x-correlation-id",
+            "value": ""
+          },
+          {
+            "key": "x-tenant-id",
+            "value": "WEB"
+          },
+          {
+            "key": "x-timestamp",
+            "value": ""
+          },
+          {
+            "key": "x-toyotapay-id",
+            "value": "ec2f2a55-c784-4ff7-9afe-494afb3d2490"
+          },
+          {
+            "key": "x-environment",
+            "value": "SBX5"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer jYZ7C6STjd9lTJTAC2NrJWRQ3NcTwkgw4NMbIp-AeeBupTPJDEOuS8wMuHUpDF5hfT6Qe8bHEPIWYDD2FVNCXg",
+            "disabled": true
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"customer_id\": \"d1111\",//create a defect for empty and verify any no validation is done \n  \"currency\": \"CAD\",\n  \"batch\": null,//create a defect for empty batch\n  \"bill_cycle_day\": \"2\", //create a defect for empty bill cycle\n  \"name\": \"fdasd\",\n  \"description\": \"This is a business account.\",\n  \"payment_gateway\": \"TMNA Ser Telematics-Chase\",//create a defect payment gate way is null is not throwing an error\n  \"payment_terms\": \"Due Upon Receipt\",//defect for null\n  \"sequence_set_id\": \"\",//defect for null\n  \"auto_pay\": false,\n  \"default_payment_method_id\": \"\",\n  \"bill_to\": {\n    \"address\": {//create a defect for null vaues for bill to address\n      \"line1\": \"\",\n      \"line2\": \"\",\n      \"city\": \"\",\n      \"state\": \"\",\n      \"country\": \" \",\n      \"county\": \"\",\n      \"postal_code\": \"\"\n    },\n    \"fax\": \"ssss\",//defect for null\n    \"first_name\": \"abc\",\n    \"home_phone\": \"\",//defect for null\n    \"last_name\": \"hghg\",\n    \"mobile_phone\": \"\",//defect for null\n    \"nickname\": \"\",//defect for null\n    \"other_phone\": \"\",//defect fo null\n    \"other_phone_type\": \"Other\",\n    \"phone\": \"\",//defect for null\n    \"email\": \"\",//defect for null\n    \"tax_region\": \"\",//defect for null\n    \"work_email\": \"\",//defect for null\n    \"work_phone\": \"\"//defect for null\n  },\n  \"sold_to\": {\n    \"address\": {////defect for null sold to address validation\n      \"line1\": \"\",\n      \"line2\": \"\",\n      \"city\": \"\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"tax_certificate\": {\n    \"company_code\": \"\",\n    \"start_date\": \"2023-03-03\",\n    \"exempt_expiration_date\": \"2023-06-08\",\n    \"exempt_status\": \"No\",\n    \"issuing_jurisdiction\": \"\"\n  },\n  \"custom_fields\": {\n    \"channel__c\": \"IVR\",\n    \"customerName__c\": \"\",\n    \"upid__c\": \"\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts",
+          "protocol": "https",
+          "host": [
+            "tftpconnectpustg",
+            "tfsglobalservices",
+            "com"
+          ],
+          "path": [
+            "v2",
+            "account-services",
+            "accounts"
+          ]
+        },
+        "description": "Generated from cURL: curl --location 'https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts' \\\n--header 'x-channel: IVR' \\\n--header 'x-correlation-id;' \\\n--header 'x-tenant-id;' \\\n--header 'x-timestamp;' \\\n--header 'x-toyotapay-id: ec2f2a55-c784-4ff7-9afe-494afb3d2490' \\\n--header 'x-environment: SBX3' \\\n--header 'Content-Type: application/json' \\\n--header 'Authorization: Bearer jYZ7C6STjd9lTJTAC2NrJWRQ3NcTwkgw4NMbIp-AeeBupTPJDEOuS8wMuHUpDF5hfT6Qe8bHEPIWYDD2FVNCXg' \\\n--data-raw '{\n  \"customer_id\": \"955963437fce498da98efc7e53bb2f31\",\n  \"currency\": \"USD\",\n  \"batch\": \"Batch1\",\n  \"bill_cycle_day\": 0,\n  \"name\": \"Telematics Account\",\n  \"description\": \"This is a business account.\",\n  \"payment_gateway\": \"TMNA Servco Telematics-Chase\",\n  \"payment_terms\": \"Due Upon Receipt\",\n  \"sequence_set_id\": \"\",\n  \"auto_pay\": false,\n  \"bill_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"sold_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"tax_certificate\": {\n    \"company_code\": \"\",\n    \"start_date\": \"2023-03-03\",\n    \"exempt_expiration_date\": \"2023-06-08\",\n    \"exempt_status\": \"No\",\n    \"issuing_jurisdiction\": \"\"\n  },\n  \"custom_fields\": {\n    \"channel__c\": \"IVR\",\n    \"customerName__c\": \"\",\n    \"upid__c\": \"\"\n  }\n}'"
+      },
+      "response": []
+    },
+    {
+      "name": "UpdateAccountByAccountID",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.sendRequest({",
+              "    url: 'https://tftpconnectputest.tfsglobalservices.com/oauth/token',",
+              "    method: 'POST',",
+              "    header: {",
+              "        'Content-Type': 'application/x-www-form-urlencoded'",
+              "    },",
+              "    body: {",
+              "        mode: 'urlencoded',",
+              "        urlencoded: [",
+              "            { key: 'grant_type', value: 'client_credentials' },",
+              "            { key: 'client_id', value: '4f55349153a44d6097ac237ad4a612c7' },",
+              "            { key: 'client_secret', value: '5450Bc2c569749839917908AD9440f35' }",
+              "        ]",
+              "    }",
+              "}, function (err, res) {",
+              "    if (err) {",
+              "        console.log('Token request error:', err);",
+              "    } else {",
+              "        var jsonResponse = res.json();",
+              "        // Assuming the token is in jsonResponse.access_token",
+              "        pm.environment.set('access_token', jsonResponse.access_token);",
+              "        console.log('Access token set in environment variable');",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tfsaccess_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "x-channel",
+            "value": "IVR"
+          },
+          {
+            "key": "x-correlation-id",
+            "value": ""
+          },
+          {
+            "key": "x-tenant-id",
+            "value": ""
+          },
+          {
+            "key": "x-timestamp",
+            "value": ""
+          },
+          {
+            "key": "x-toyotapay-id",
+            "value": "ec2f2a55-c784-4ff7-9afe-494afb3d2490"
+          },
+          {
+            "key": "x-environment",
+            "value": "SBX5"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer jYZ7C6STjd9lTJTAC2NrJWRQ3NcTwkgw4NMbIp-AeeBupTPJDEOuS8wMuHUpDF5hfT6Qe8bHEPIWYDD2FVNCXg"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"currency\": \"USD\",\n  \"batch\": \"Batch1\",\n  \"bill_cycle_day\": 0,\n  \"name\": \"Telematics Account\",\n  \"description\": \"This is a business account.\",\n  \"payment_gateway\": \"TMNA Servco Telematics-Chase\",\n  \"payment_terms\": \"Due Upon Receipt\",\n  \"sequence_set_id\": \"\",\n  \"auto_pay\": true,\n  \"bill_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"sold_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"tax_certificate\": {\n    \"company_code\": \"\",\n    \"start_date\": \"2023-03-03\",\n    \"exempt_expiration_date\": \"2023-06-08\",\n    \"exempt_status\": \"No\",\n    \"issuing_jurisdiction\": \"\"\n  },\n  \"custom_fields\": {\n    \"channel__c\": \"IVR\",\n    \"customerName__c\": \"\",\n    \"upid__c\": \"\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts/{{toyotapayAccountId}}",
+          "protocol": "https",
+          "host": [
+            "tftpconnectpustg",
+            "tfsglobalservices",
+            "com"
+          ],
+          "path": [
+            "v2",
+            "account-services",
+            "accounts",
+            "{{toyotapayAccountId}}"
+          ]
+        },
+        "description": "Generated from cURL: curl --location 'https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts' \\\n--header 'x-channel: IVR' \\\n--header 'x-correlation-id;' \\\n--header 'x-tenant-id;' \\\n--header 'x-timestamp;' \\\n--header 'x-toyotapay-id: ec2f2a55-c784-4ff7-9afe-494afb3d2490' \\\n--header 'x-environment: SBX3' \\\n--header 'Content-Type: application/json' \\\n--header 'Authorization: Bearer jYZ7C6STjd9lTJTAC2NrJWRQ3NcTwkgw4NMbIp-AeeBupTPJDEOuS8wMuHUpDF5hfT6Qe8bHEPIWYDD2FVNCXg' \\\n--data-raw '{\n  \"customer_id\": \"955963437fce498da98efc7e53bb2f31\",\n  \"currency\": \"USD\",\n  \"batch\": \"Batch1\",\n  \"bill_cycle_day\": 0,\n  \"name\": \"Telematics Account\",\n  \"description\": \"This is a business account.\",\n  \"payment_gateway\": \"TMNA Servco Telematics-Chase\",\n  \"payment_terms\": \"Due Upon Receipt\",\n  \"sequence_set_id\": \"\",\n  \"auto_pay\": false,\n  \"bill_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"sold_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"tax_certificate\": {\n    \"company_code\": \"\",\n    \"start_date\": \"2023-03-03\",\n    \"exempt_expiration_date\": \"2023-06-08\",\n    \"exempt_status\": \"No\",\n    \"issuing_jurisdiction\": \"\"\n  },\n  \"custom_fields\": {\n    \"channel__c\": \"IVR\",\n    \"customerName__c\": \"\",\n    \"upid__c\": \"\"\n  }\n}'"
+      },
+      "response": []
+    },
+    {
+      "name": "UpdateAccountBySettingAutoPayTrue",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.sendRequest({\r",
+              "    url: 'https://tftpconnectputest.tfsglobalservices.com/oauth/token',\r",
+              "    method: 'POST',\r",
+              "    header: {\r",
+              "        'Content-Type': 'application/x-www-form-urlencoded'\r",
+              "    },\r",
+              "    body: {\r",
+              "        mode: 'urlencoded',\r",
+              "        urlencoded: [\r",
+              "            { key: 'grant_type', value: 'client_credentials' },\r",
+              "            { key: 'client_id', value: '4f55349153a44d6097ac237ad4a612c7' },\r",
+              "            { key: 'client_secret', value: '5450Bc2c569749839917908AD9440f35' }\r",
+              "        ]\r",
+              "    }\r",
+              "}, function (err, res) {\r",
+              "    if (err) {\r",
+              "        console.log('Token request error:', err);\r",
+              "    } else {\r",
+              "        var jsonResponse = res.json();\r",
+              "        // Assuming the token is in jsonResponse.access_token\r",
+              "        pm.environment.set('access_token', jsonResponse.access_token);\r",
+              "        console.log('Access token set in environment variable');\r",
+              "    }\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tfsaccess_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "x-channel",
+            "value": "IVR"
+          },
+          {
+            "key": "x-correlation-id",
+            "value": ""
+          },
+          {
+            "key": "x-tenant-id",
+            "value": ""
+          },
+          {
+            "key": "x-timestamp",
+            "value": ""
+          },
+          {
+            "key": "x-toyotapay-id",
+            "value": "ec2f2a55-c784-4ff7-9afe-494afb3d2490"
+          },
+          {
+            "key": "x-environment",
+            "value": "SBX3"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer jYZ7C6STjd9lTJTAC2NrJWRQ3NcTwkgw4NMbIp-AeeBupTPJDEOuS8wMuHUpDF5hfT6Qe8bHEPIWYDD2FVNCXg"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"currency\": \"USD\",\n  \"batch\": \"Batch1\",\n  \"bill_cycle_day\": 0,\n  \"name\": \"Telematics Account\",\n  \"description\": \"This is a business account.\",\n  \"payment_gateway\": \"TMNA Servco Telematics-Chase\",\n  \"default_payment\": \"{{defaultPmId}}\",\n  \"payment_terms\": \"Due Upon Receipt\",\n  \"sequence_set_id\": \"\",\n  \"auto_pay\": true,\n  \"bill_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"sold_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"tax_certificate\": {\n    \"company_code\": \"\",\n    \"start_date\": \"2023-03-03\",\n    \"exempt_expiration_date\": \"2023-06-08\",\n    \"exempt_status\": \"No\",\n    \"issuing_jurisdiction\": \"\"\n  },\n  \"custom_fields\": {\n    \"channel__c\": \"IVR\",\n    \"customerName__c\": \"\",\n    \"upid__c\": \"\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts/8adce2429bdad231019be1ae92763436",
+          "protocol": "https",
+          "host": [
+            "tftpconnectpustg",
+            "tfsglobalservices",
+            "com"
+          ],
+          "path": [
+            "v2",
+            "account-services",
+            "accounts",
+            "8adce2429bdad231019be1ae92763436"
+          ]
+        },
+        "description": "Generated from cURL: curl --location 'https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts' \\\n--header 'x-channel: IVR' \\\n--header 'x-correlation-id;' \\\n--header 'x-tenant-id;' \\\n--header 'x-timestamp;' \\\n--header 'x-toyotapay-id: ec2f2a55-c784-4ff7-9afe-494afb3d2490' \\\n--header 'x-environment: SBX3' \\\n--header 'Content-Type: application/json' \\\n--header 'Authorization: Bearer jYZ7C6STjd9lTJTAC2NrJWRQ3NcTwkgw4NMbIp-AeeBupTPJDEOuS8wMuHUpDF5hfT6Qe8bHEPIWYDD2FVNCXg' \\\n--data-raw '{\n  \"customer_id\": \"955963437fce498da98efc7e53bb2f31\",\n  \"currency\": \"USD\",\n  \"batch\": \"Batch1\",\n  \"bill_cycle_day\": 0,\n  \"name\": \"Telematics Account\",\n  \"description\": \"This is a business account.\",\n  \"payment_gateway\": \"TMNA Servco Telematics-Chase\",\n  \"payment_terms\": \"Due Upon Receipt\",\n  \"sequence_set_id\": \"\",\n  \"auto_pay\": false,\n  \"bill_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"sold_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"tax_certificate\": {\n    \"company_code\": \"\",\n    \"start_date\": \"2023-03-03\",\n    \"exempt_expiration_date\": \"2023-06-08\",\n    \"exempt_status\": \"No\",\n    \"issuing_jurisdiction\": \"\"\n  },\n  \"custom_fields\": {\n    \"channel__c\": \"IVR\",\n    \"customerName__c\": \"\",\n    \"upid__c\": \"\"\n  }\n}'"
+      },
+      "response": []
+    },
+    {
+      "name": "UpdateAccountBySettingDefaultPaymentMethod",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.sendRequest({",
+              "    url: 'https://tftpconnectputest.tfsglobalservices.com/oauth/token',",
+              "    method: 'POST',",
+              "    header: {",
+              "        'Content-Type': 'application/x-www-form-urlencoded'",
+              "    },",
+              "    body: {",
+              "        mode: 'urlencoded',",
+              "        urlencoded: [",
+              "            { key: 'grant_type', value: 'client_credentials' },",
+              "            { key: 'client_id', value: '4f55349153a44d6097ac237ad4a612c7' },",
+              "            { key: 'client_secret', value: '5450Bc2c569749839917908AD9440f35' }",
+              "        ]",
+              "    }",
+              "}, function (err, res) {",
+              "    if (err) {",
+              "        console.log('Token request error:', err);",
+              "    } else {",
+              "        var jsonResponse = res.json();",
+              "        // Assuming the token is in jsonResponse.access_token",
+              "        pm.environment.set('tfsaccess_token', jsonResponse.access_token);",
+              "        console.log('Access token set in environment variable');",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tfsaccess_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "x-channel",
+            "value": "IVR"
+          },
+          {
+            "key": "x-correlation-id",
+            "value": ""
+          },
+          {
+            "key": "x-tenant-id",
+            "value": ""
+          },
+          {
+            "key": "x-timestamp",
+            "value": ""
+          },
+          {
+            "key": "x-toyotapay-id",
+            "value": "ec2f2a55-c784-4ff7-9afe-494afb3d2490"
+          },
+          {
+            "key": "x-environment",
+            "value": "SBX5"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer jYZ7C6STjd9lTJTAC2NrJWRQ3NcTwkgw4NMbIp-AeeBupTPJDEOuS8wMuHUpDF5hfT6Qe8bHEPIWYDD2FVNCXg"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"currency\": \"USD\",\n  \"batch\": \"Batch1\",\n  \"bill_cycle_day\": 0,\n  \"name\": \"Telematics Account\",\n  \"description\": \"This is a business account.\",\n  \"payment_gateway\": \"TMNA Servco Telematics-Chase\",\n  \"payment_terms\": \"Due Upon Receipt\",\n  \"sequence_set_id\": \"\",\n  \"auto_pay\": true,\n  \"default_payment_method_id\": \"8adce91392bdf4850192c023f70f5769\",\n  \"bill_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"sold_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"tax_certificate\": {\n    \"company_code\": \"\",\n    \"start_date\": \"2023-03-03\",\n    \"exempt_expiration_date\": \"2023-06-08\",\n    \"exempt_status\": \"No\",\n    \"issuing_jurisdiction\": \"\"\n  },\n  \"custom_fields\": {\n    \"channel__c\": \"IVR\",\n    \"customerName__c\": \"\",\n    \"upid__c\": \"\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts/8adcc15490a1e8f00190a316fb7d0631",
+          "protocol": "https",
+          "host": [
+            "tftpconnectpustg",
+            "tfsglobalservices",
+            "com"
+          ],
+          "path": [
+            "v2",
+            "account-services",
+            "accounts",
+            "8adcc15490a1e8f00190a316fb7d0631"
+          ]
+        },
+        "description": "Generated from cURL: curl --location 'https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts' \\\n--header 'x-channel: IVR' \\\n--header 'x-correlation-id;' \\\n--header 'x-tenant-id;' \\\n--header 'x-timestamp;' \\\n--header 'x-toyotapay-id: ec2f2a55-c784-4ff7-9afe-494afb3d2490' \\\n--header 'x-environment: SBX3' \\\n--header 'Content-Type: application/json' \\\n--header 'Authorization: Bearer jYZ7C6STjd9lTJTAC2NrJWRQ3NcTwkgw4NMbIp-AeeBupTPJDEOuS8wMuHUpDF5hfT6Qe8bHEPIWYDD2FVNCXg' \\\n--data-raw '{\n  \"customer_id\": \"955963437fce498da98efc7e53bb2f31\",\n  \"currency\": \"USD\",\n  \"batch\": \"Batch1\",\n  \"bill_cycle_day\": 0,\n  \"name\": \"Telematics Account\",\n  \"description\": \"This is a business account.\",\n  \"payment_gateway\": \"TMNA Servco Telematics-Chase\",\n  \"payment_terms\": \"Due Upon Receipt\",\n  \"sequence_set_id\": \"\",\n  \"auto_pay\": false,\n  \"bill_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"sold_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"tax_certificate\": {\n    \"company_code\": \"\",\n    \"start_date\": \"2023-03-03\",\n    \"exempt_expiration_date\": \"2023-06-08\",\n    \"exempt_status\": \"No\",\n    \"issuing_jurisdiction\": \"\"\n  },\n  \"custom_fields\": {\n    \"channel__c\": \"IVR\",\n    \"customerName__c\": \"\",\n    \"upid__c\": \"\"\n  }\n}'"
+      },
+      "response": []
+    },
+    {
+      "name": "UpdateAccountByCustomerID",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.sendRequest({",
+              "    url: 'https://tftpconnectputest.tfsglobalservices.com/oauth/token',",
+              "    method: 'POST',",
+              "    header: {",
+              "        'Content-Type': 'application/x-www-form-urlencoded'",
+              "    },",
+              "    body: {",
+              "        mode: 'urlencoded',",
+              "        urlencoded: [",
+              "            { key: 'grant_type', value: 'client_credentials' },",
+              "            { key: 'client_id', value: '4f55349153a44d6097ac237ad4a612c7' },",
+              "            { key: 'client_secret', value: '5450Bc2c569749839917908AD9440f35' }",
+              "        ]",
+              "    }",
+              "}, function (err, res) {",
+              "    if (err) {",
+              "        console.log('Token request error:', err);",
+              "    } else {",
+              "        var jsonResponse = res.json();",
+              "        // Assuming the token is in jsonResponse.access_token",
+              "        pm.environment.set('tfsaccess_token', jsonResponse.access_token);",
+              "        console.log('Access token set in environment variable');",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tfsaccess_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "x-channel",
+            "value": "IVR"
+          },
+          {
+            "key": "x-correlation-id",
+            "value": ""
+          },
+          {
+            "key": "x-tenant-id",
+            "value": ""
+          },
+          {
+            "key": "x-timestamp",
+            "value": ""
+          },
+          {
+            "key": "x-toyotapay-id",
+            "value": "ec2f2a55-c784-4ff7-9afe-494afb3d2490"
+          },
+          {
+            "key": "x-environment",
+            "value": "SBX3"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer jYZ7C6STjd9lTJTAC2NrJWRQ3NcTwkgw4NMbIp-AeeBupTPJDEOuS8wMuHUpDF5hfT6Qe8bHEPIWYDD2FVNCXg"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"currency\": \"USD\",\n  \"batch\": \"Batch1\",\n  \"bill_cycle_day\": 0,\n  \"name\": \"Telematics Account\",\n  \"description\": \"This is a business account.\",\n  \"payment_gateway\": \"TMNA Servco Telematics-Chase\",\n  \"payment_terms\": \"Due Upon Receipt\",\n  \"sequence_set_id\": \"\",\n  \"auto_pay\": false,\n  \"bill_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"sold_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"tax_certificate\": {\n    \"company_code\": \"\",\n    \"start_date\": \"2023-03-03\",\n    \"exempt_expiration_date\": \"2023-06-08\",\n    \"exempt_status\": \"No\",\n    \"issuing_jurisdiction\": \"\"\n  },\n  \"custom_fields\": {\n    \"channel__c\": \"IVR\",\n    \"customerName__c\": \"\",\n    \"upid__c\": \"\"\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts/955963437fce498da98efc7e53bb2f31",
+          "protocol": "https",
+          "host": [
+            "tftpconnectpustg",
+            "tfsglobalservices",
+            "com"
+          ],
+          "path": [
+            "v2",
+            "account-services",
+            "accounts",
+            "955963437fce498da98efc7e53bb2f31"
+          ]
+        },
+        "description": "Generated from cURL: curl --location 'https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts' \\\n--header 'x-channel: IVR' \\\n--header 'x-correlation-id;' \\\n--header 'x-tenant-id;' \\\n--header 'x-timestamp;' \\\n--header 'x-toyotapay-id: ec2f2a55-c784-4ff7-9afe-494afb3d2490' \\\n--header 'x-environment: SBX3' \\\n--header 'Content-Type: application/json' \\\n--header 'Authorization: Bearer jYZ7C6STjd9lTJTAC2NrJWRQ3NcTwkgw4NMbIp-AeeBupTPJDEOuS8wMuHUpDF5hfT6Qe8bHEPIWYDD2FVNCXg' \\\n--data-raw '{\n  \"customer_id\": \"955963437fce498da98efc7e53bb2f31\",\n  \"currency\": \"USD\",\n  \"batch\": \"Batch1\",\n  \"bill_cycle_day\": 0,\n  \"name\": \"Telematics Account\",\n  \"description\": \"This is a business account.\",\n  \"payment_gateway\": \"TMNA Servco Telematics-Chase\",\n  \"payment_terms\": \"Due Upon Receipt\",\n  \"sequence_set_id\": \"\",\n  \"auto_pay\": false,\n  \"bill_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"sold_to\": {\n    \"address\": {\n      \"line1\": \"1051 E Hillsdale Blvd\",\n      \"line2\": \"\",\n      \"city\": \"Foster City\",\n      \"state\": \"CA\",\n      \"country\": \"United States\",\n      \"county\": \"tx\",\n      \"postal_code\": \"94404\"\n    },\n    \"fax\": \"1234\",\n    \"first_name\": \"abcd\",\n    \"home_phone\": \"7965678\",\n    \"last_name\": \"def\",\n    \"mobile_phone\": \"59569569\",\n    \"nickname\": \"weterte\",\n    \"other_phone\": \"45654543\",\n    \"other_phone_type\": \"Mobile\",\n    \"phone\": \"3454355434\",\n    \"email\": \"abcd@gmail.com\",\n    \"tax_region\": \"TX\",\n    \"work_email\": \"john.smith@test.com\",\n    \"work_phone\": \"234323\"\n  },\n  \"tax_certificate\": {\n    \"company_code\": \"\",\n    \"start_date\": \"2023-03-03\",\n    \"exempt_expiration_date\": \"2023-06-08\",\n    \"exempt_status\": \"No\",\n    \"issuing_jurisdiction\": \"\"\n  },\n  \"custom_fields\": {\n    \"channel__c\": \"IVR\",\n    \"customerName__c\": \"\",\n    \"upid__c\": \"\"\n  }\n}'"
+      },
+      "response": []
+    },
+    {
+      "name": "GetPaymentMethod",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.sendRequest({\r",
+              "    url: 'https://tftpconnectputest.tfsglobalservices.com/oauth/token',\r",
+              "    method: 'POST',\r",
+              "    header: {\r",
+              "        'Content-Type': 'application/x-www-form-urlencoded'\r",
+              "    },\r",
+              "    body: {\r",
+              "        mode: 'urlencoded',\r",
+              "        urlencoded: [\r",
+              "            { key: 'grant_type', value: 'client_credentials' },\r",
+              "            { key: 'client_id', value: '4f55349153a44d6097ac237ad4a612c7' },\r",
+              "            { key: 'client_secret', value: '5450Bc2c569749839917908AD9440f35' }\r",
+              "        ]\r",
+              "    }\r",
+              "}, function (err, res) {\r",
+              "    if (err) {\r",
+              "        console.log('Token request error:', err);\r",
+              "    } else {\r",
+              "        var jsonResponse = res.json();\r",
+              "        // Assuming the token is in jsonResponse.access_token\r",
+              "        pm.environment.set('access_token', jsonResponse.access_token);\r",
+              "        console.log('Access token set in environment variable');\r",
+              "    }\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tfsaccess_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer qJSA1vgKSAoxRu-k_IgRi1I7tWli8kfeGTtOsB7OHiWoo25ZpnKKV_v1K9Wqg2ucLSEBdMeOVzpTQa9v1Q8-RQ"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-toyotapay-id",
+            "value": "ec2f2a55-c784-4ff7-9afe-494afb3d2490"
+          },
+          {
+            "key": "x-tenant-id",
+            "value": "Americas"
+          },
+          {
+            "key": "x-channel",
+            "value": "CTP"
+          },
+          {
+            "key": "x-correlation-id",
+            "value": ""
+          },
+          {
+            "key": "x-timestamp",
+            "value": "1723473351"
+          },
+          {
+            "key": "x-environment",
+            "value": "SBX5"
+          }
+        ],
+        "url": {
+          "raw": "https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts/4a2ce379dc7e40978fb00ea4d3027559/payment-methods?is_default_only=true",
+          "protocol": "https",
+          "host": [
+            "tftpconnectpustg",
+            "tfsglobalservices",
+            "com"
+          ],
+          "path": [
+            "v2",
+            "account-services",
+            "accounts",
+            "4a2ce379dc7e40978fb00ea4d3027559",
+            "payment-methods"
+          ],
+          "query": [
+            {
+              "key": "is_default_only",
+              "value": "true"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --location 'https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts/8adcc15490a1e8f00190a316fb7d0631/payment-methods' \\\n--header 'Authorization: Bearer qJSA1vgKSAoxRu-k_IgRi1I7tWli8kfeGTtOsB7OHiWoo25ZpnKKV_v1K9Wqg2ucLSEBdMeOVzpTQa9v1Q8-RQ' \\\n--header 'Content-Type: application/json' \\\n--header 'x-toyotapay-id: ec2f2a55-c784-4ff7-9afe-494afb3d2490' \\\n--header 'x-tenant-id: Americas' \\\n--header 'x-channel: CTP' \\\n--header 'x-correlation-id;' \\\n--header 'x-timestamp: 1723473351' \\\n--header 'x-environment: SBX5'"
+      },
+      "response": []
+    },
+    {
+      "name": "GetPaymentMethod Copy",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer qJSA1vgKSAoxRu-k_IgRi1I7tWli8kfeGTtOsB7OHiWoo25ZpnKKV_v1K9Wqg2ucLSEBdMeOVzpTQa9v1Q8-RQ"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-toyotapay-id",
+            "value": "ec2f2a55-c784-4ff7-9afe-494afb3d2490"
+          },
+          {
+            "key": "x-tenant-id",
+            "value": "Americas"
+          },
+          {
+            "key": "x-channel",
+            "value": "CTP"
+          },
+          {
+            "key": "x-correlation-id",
+            "value": ""
+          },
+          {
+            "key": "x-timestamp",
+            "value": "1723473351"
+          },
+          {
+            "key": "x-environment",
+            "value": "SBX5"
+          }
+        ],
+        "url": {
+          "raw": "https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts/PMwithnotransaction/payment-methods?is_default_only=true",
+          "protocol": "https",
+          "host": [
+            "tftpconnectpustg",
+            "tfsglobalservices",
+            "com"
+          ],
+          "path": [
+            "v2",
+            "account-services",
+            "accounts",
+            "PMwithnotransaction",
+            "payment-methods"
+          ],
+          "query": [
+            {
+              "key": "is_default_only",
+              "value": "true"
+            }
+          ]
+        },
+        "description": "Generated from cURL: curl --location 'https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts/8adcc15490a1e8f00190a316fb7d0631/payment-methods' \\\n--header 'Authorization: Bearer qJSA1vgKSAoxRu-k_IgRi1I7tWli8kfeGTtOsB7OHiWoo25ZpnKKV_v1K9Wqg2ucLSEBdMeOVzpTQa9v1Q8-RQ' \\\n--header 'Content-Type: application/json' \\\n--header 'x-toyotapay-id: ec2f2a55-c784-4ff7-9afe-494afb3d2490' \\\n--header 'x-tenant-id: Americas' \\\n--header 'x-channel: CTP' \\\n--header 'x-correlation-id;' \\\n--header 'x-timestamp: 1723473351' \\\n--header 'x-environment: SBX5'"
+      },
+      "response": []
+    },
+    {
+      "name": "DeletePaymentMethodByAccountID",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "TDvfI8TrsDqMsYDYGMKpeyO143_h4X9SbmYjHWvTPDiZA8ymPVBv5lyr261zJ2j0zKseRItUlZK92lKbZfMXxQ",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer vUrrXlmhDHWU0-1fYpPM_poB0qHeMN37-oRQE0nucnOCwV6G8GF4NWsNq6p3s_CpbxML_Uav46POJLpsLJ5utQ"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-toyotapay-id",
+            "value": "ec2f2a55-c784-4ff7-9afe-494afb3d2490"
+          },
+          {
+            "key": "x-tenant-id",
+            "value": "Americas"
+          },
+          {
+            "key": "x-channel",
+            "value": "CTP"
+          },
+          {
+            "key": "x-correlation-id",
+            "value": ""
+          },
+          {
+            "key": "x-timestamp",
+            "value": "1723473351"
+          },
+          {
+            "key": "x-environment",
+            "value": "SBX5"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"toyotapay_account_id\":\"8adcc15490a1e8f00190a316fb7d0631\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/payment-methods/8adcc154917a78ba01917b3f00705ac0",
+          "protocol": "https",
+          "host": [
+            "tftpconnectpustg",
+            "tfsglobalservices",
+            "com"
+          ],
+          "path": [
+            "v2",
+            "account-services",
+            "payment-methods",
+            "8adcc154917a78ba01917b3f00705ac0"
+          ]
+        },
+        "description": "Generated from cURL: curl --location --request DELETE 'https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/payment-methods/8adcc154917a78ba01917b3f00705ac0' \\\n--header 'Authorization: Bearer vUrrXlmhDHWU0-1fYpPM_poB0qHeMN37-oRQE0nucnOCwV6G8GF4NWsNq6p3s_CpbxML_Uav46POJLpsLJ5utQ' \\\n--header 'Content-Type: application/json' \\\n--header 'x-toyotapay-id: ec2f2a55-c784-4ff7-9afe-494afb3d2490' \\\n--header 'x-tenant-id: Americas' \\\n--header 'x-channel: CTP' \\\n--header 'x-correlation-id;' \\\n--header 'x-timestamp: 1723473351' \\\n--header 'x-environment: SBX5' \\\n--header 'payment_method_id: 8adcc154917a78ba01917b3f00705ac0' \\\n--data '{\n    \"toyotapay_account_id\":\"8adcc154917a78ba01917b3f00705ac0\"\n}''"
+      },
+      "response": []
+    },
+    {
+      "name": "DeleteDefaultPaymentMethod",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.sendRequest({\r",
+              "    url: 'https://example.com/oauth/token',\r",
+              "    method: 'POST',\r",
+              "    header: {\r",
+              "        'Content-Type': 'application/json'\r",
+              "    },\r",
+              "    body: {\r",
+              "        mode: 'raw',\r",
+              "        raw: JSON.stringify({\r",
+              "            client_id: 'your_client_id',\r",
+              "            client_secret: 'your_client_secret',\r",
+              "            grant_type: 'client_credentials'\r",
+              "        })\r",
+              "    }\r",
+              "}, function (err, res) {\r",
+              "    if (err) {\r",
+              "        console.log('Error fetching token:', err);\r",
+              "    } else {\r",
+              "        var jsonResponse = res.json();\r",
+              "        // Assuming the token is in jsonResponse.access_token\r",
+              "        pm.environment.set('access_token', jsonResponse.access_token);\r",
+              "        console.log('Access token saved to environment variable');\r",
+              "    }\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer vUrrXlmhDHWU0-1fYpPM_poB0qHeMN37-oRQE0nucnOCwV6G8GF4NWsNq6p3s_CpbxML_Uav46POJLpsLJ5utQ"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-toyotapay-id",
+            "value": "ec2f2a55-c784-4ff7-9afe-494afb3d2490"
+          },
+          {
+            "key": "x-tenant-id",
+            "value": "Americas"
+          },
+          {
+            "key": "x-channel",
+            "value": "CTP"
+          },
+          {
+            "key": "x-correlation-id",
+            "value": ""
+          },
+          {
+            "key": "x-timestamp",
+            "value": "1723473351"
+          },
+          {
+            "key": "x-environment",
+            "value": "SBX5"
+          },
+          {
+            "key": "payment_method_id",
+            "value": "8adce91392bdf4850192c023f70f5769"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"toyotapay_account_id\":\"8adcc154917a78ba01917b3f00705ac0\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/payment-methods/FhiNQ7kct_pZwxJQE4U5x8M-BSqOf5iurgg12HJQlHVBmqKrL2Dkq0xTnJqAiNLs-ZrbfqD-_sw4pZ4UL6Lpbw",
+          "protocol": "https",
+          "host": [
+            "tftpconnectpustg",
+            "tfsglobalservices",
+            "com"
+          ],
+          "path": [
+            "v2",
+            "account-services",
+            "payment-methods",
+            "FhiNQ7kct_pZwxJQE4U5x8M-BSqOf5iurgg12HJQlHVBmqKrL2Dkq0xTnJqAiNLs-ZrbfqD-_sw4pZ4UL6Lpbw"
+          ]
+        },
+        "description": "Generated from cURL: curl --location --request DELETE 'https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/payment-methods/8adcc154917a78ba01917b3f00705ac0' \\\n--header 'Authorization: Bearer vUrrXlmhDHWU0-1fYpPM_poB0qHeMN37-oRQE0nucnOCwV6G8GF4NWsNq6p3s_CpbxML_Uav46POJLpsLJ5utQ' \\\n--header 'Content-Type: application/json' \\\n--header 'x-toyotapay-id: ec2f2a55-c784-4ff7-9afe-494afb3d2490' \\\n--header 'x-tenant-id: Americas' \\\n--header 'x-channel: CTP' \\\n--header 'x-correlation-id;' \\\n--header 'x-timestamp: 1723473351' \\\n--header 'x-environment: SBX5' \\\n--header 'payment_method_id: 8adcc154917a78ba01917b3f00705ac0' \\\n--data '{\n    \"toyotapay_account_id\":\"8adcc154917a78ba01917b3f00705ac0\"\n}''"
+      },
+      "response": []
+    },
+    {
+      "name": "DeletePaymentMethodByCustomerID",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "iNtAVj91z4JBJIXpHUnEJrTly-GbEhRpaD3DRYwwfsKKZT79cK5VSnua9d4c9Aw9EiuQukRVk4Fm1PeZK6Ptww",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer vUrrXlmhDHWU0-1fYpPM_poB0qHeMN37-oRQE0nucnOCwV6G8GF4NWsNq6p3s_CpbxML_Uav46POJLpsLJ5utQ"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-toyotapay-id",
+            "value": "ec2f2a55-c784-4ff7-9afe-494afb3d2490"
+          },
+          {
+            "key": "x-tenant-id",
+            "value": "Americas"
+          },
+          {
+            "key": "x-channel",
+            "value": "CTP"
+          },
+          {
+            "key": "x-correlation-id",
+            "value": ""
+          },
+          {
+            "key": "x-timestamp",
+            "value": "1723473351"
+          },
+          {
+            "key": "x-environment",
+            "value": "SBX5"
+          },
+          {
+            "key": "payment_method_id",
+            "value": "8adcc154917a78ba01917b3f00705ac0"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"toyotapay_account_id\":\"955963437fce498da98efc7e53bb2f31\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/payment-methods/8adcff3f92bdf4660192c028430e0244",
+          "protocol": "https",
+          "host": [
+            "tftpconnectpustg",
+            "tfsglobalservices",
+            "com"
+          ],
+          "path": [
+            "v2",
+            "account-services",
+            "payment-methods",
+            "8adcff3f92bdf4660192c028430e0244"
+          ]
+        },
+        "description": "Generated from cURL: curl --location --request DELETE 'https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/payment-methods/8adcc154917a78ba01917b3f00705ac0' \\\n--header 'Authorization: Bearer vUrrXlmhDHWU0-1fYpPM_poB0qHeMN37-oRQE0nucnOCwV6G8GF4NWsNq6p3s_CpbxML_Uav46POJLpsLJ5utQ' \\\n--header 'Content-Type: application/json' \\\n--header 'x-toyotapay-id: ec2f2a55-c784-4ff7-9afe-494afb3d2490' \\\n--header 'x-tenant-id: Americas' \\\n--header 'x-channel: CTP' \\\n--header 'x-correlation-id;' \\\n--header 'x-timestamp: 1723473351' \\\n--header 'x-environment: SBX5' \\\n--header 'payment_method_id: 8adcc154917a78ba01917b3f00705ac0' \\\n--data '{\n    \"toyotapay_account_id\":\"8adcc154917a78ba01917b3f00705ac0\"\n}''"
+      },
+      "response": []
+    },
+    {
+      "name": "Get-Account-By-Customer-id",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "pm.sendRequest({",
+              "    url: 'https://tftpconnectputest.tfsglobalservices.com/oauth/token',",
+              "    method: 'POST',",
+              "    header: {",
+              "        'Content-Type': 'application/x-www-form-urlencoded'",
+              "    },",
+              "    body: {",
+              "        mode: 'urlencoded',",
+              "        urlencoded: [",
+              "            { key: 'grant_type', value: 'client_credentials' },",
+              "            { key: 'client_id', value: '4f55349153a44d6097ac237ad4a612c7' },",
+              "            { key: 'client_secret', value: '5450Bc2c569749839917908AD9440f35' }",
+              "        ]",
+              "    }",
+              "}, function (err, res) {",
+              "    if (err) {",
+              "        console.log('Token request error:', err);",
+              "    } else {",
+              "        var jsonResponse = res.json();",
+              "        // Assuming the token is in jsonResponse.access_token",
+              "        pm.environment.set('tfsaccess_token', jsonResponse.access_token);",
+              "        console.log('Access token set in environment variable');",
+              "    }",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tfsaccess_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-tenant-id",
+            "value": "CTP"
+          },
+          {
+            "key": "x-channel",
+            "value": "WEB"
+          },
+          {
+            "key": "x-correlation-id",
+            "value": "c52fdc72-8a0e-4600-92b0-ee9f6d866b25"
+          },
+          {
+            "key": "x-timestamp",
+            "value": "2022-05-02 16:12:24"
+          },
+          {
+            "key": "x-toyotapay-id",
+            "value": "ec2f2a55-c784-4ff7-9afe-494afb3d2490"
+          },
+          {
+            "key": "x-environment",
+            "value": "SBX5"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer bcOFtWVRC34Yscs-os_btp8nuWYtrl5bSItfGL22VUl8lRtPgWgAWsGdKyd4e6UFJmE8h6guMeiseoYwNenbzg",
+            "disabled": true
+          }
+        ],
+        "url": {
+          "raw": "https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts?customer_id=",
+          "protocol": "https",
+          "host": [
+            "tftpconnectpustg",
+            "tfsglobalservices",
+            "com"
+          ],
+          "path": [
+            "v2",
+            "account-services",
+            "accounts"
+          ],
+          "query": [
+            {
+              "key": "customer_id",
+              "value": ""
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get-Account-By-Customer-id Copy",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{tfsaccess_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-tenant-id",
+            "value": "CTP"
+          },
+          {
+            "key": "x-channel",
+            "value": "WEB"
+          },
+          {
+            "key": "x-correlation-id",
+            "value": "c52fdc72-8a0e-4600-92b0-ee9f6d866b25"
+          },
+          {
+            "key": "x-timestamp",
+            "value": "2022-05-02 16:12:24"
+          },
+          {
+            "key": "x-toyotapay-id",
+            "value": "ec2f2a55-c784-4ff7-9afe-494afb3d2490"
+          },
+          {
+            "key": "x-environment",
+            "value": "SBX3",
+            "disabled": true
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer yZBDOTEhybCGobmjNYWzjZi0BwA-XmYtygfClcoTtbhZh_1ISKmi7zlDSnVf9DX88tpgvpT3_3XAVmkP31AUVA"
+          }
+        ],
+        "url": {
+          "raw": "https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts?customer_id=4a2ce379dc7e40978fb00ea4d3027559",
+          "protocol": "https",
+          "host": [
+            "tftpconnectpustg",
+            "tfsglobalservices",
+            "com"
+          ],
+          "path": [
+            "v2",
+            "account-services",
+            "accounts"
+          ],
+          "query": [
+            {
+              "key": "customer_id",
+              "value": "4a2ce379dc7e40978fb00ea4d3027559"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts/8adc91139444b36001945772095375e5",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer 1UVUJq1FseAsG2s0C1lLxlzDs7OsZqGjNB07Y6mouOjsFny3BdOrQoWtI5ftlChOjB6hgQ073l3YxGJsgt94Og"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-channel",
+            "value": "APP"
+          },
+          {
+            "key": "x-correlation-id",
+            "value": "5d72dd0c-b2f8-436e-a49f-3460b59b8812"
+          },
+          {
+            "key": "x-tenant-id",
+            "value": "CTP"
+          },
+          {
+            "key": "x-toyotapay-id",
+            "value": "ec2f2a55-c784-4ff7-9afe-494afb3d2490"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \n    \"bill_to\": {\n        \"address\": {\n            \"line1\": \"1031 Sheppard Ave W\",\n            \"line2\": \"\",\n            \"city\": \"Hawai\",\n            \"state\": \"Alabama\",\n            \"country\": \"United States\",\n            \"county\": \"\",\n            \"postal_code\": \"\"\n        },\n        \"fax\": null,\n        \"first_name\": \"dev\",\n        \"home_phone\": null,\n        \"last_name\": \"stage\",\n        \"mobile_phone\": null,\n        \"nickname\": null,\n        \"other_phone\": null,\n        \"other_phone_type\": null,\n        \"phone\": null,\n        \"email\": null,\n        \"tax_region\": null,\n        \"work_email\": null,\n        \"work_phone\": null\n    },\n    \"sold_to\": {\n        \"address\": {\n            \"line1\": \"1031 Sheppard Ave W\",\n            \"line2\": \"\",\n            \"city\": \"Hawai\",\n            \"state\": \"Alabama\",\n            \"country\": \"United States\",\n            \"county\": \"\",\n            \"postal_code\": \"\"\n        },\n        \"fax\": null,\n        \"first_name\": \"dev\",\n        \"home_phone\": null,\n        \"last_name\": \"stage\",\n        \"mobile_phone\": null,\n        \"nickname\": null,\n        \"other_phone\": null,\n        \"other_phone_type\": null,\n        \"phone\": null,\n        \"email\": null,\n        \"tax_region\": null,\n        \"work_email\": null,\n        \"work_phone\": null\n    }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts/8adc91139444b36001945772095375e5",
+          "protocol": "https",
+          "host": [
+            "tftpconnectpustg",
+            "tfsglobalservices",
+            "com"
+          ],
+          "path": [
+            "v2",
+            "account-services",
+            "accounts",
+            "8adc91139444b36001945772095375e5"
+          ]
+        },
+        "description": "Generated from cURL: curl --location --request PUT 'https://tftpconnectpustg.tfsglobalservices.com/v2/account-services/accounts/8adc91139444b36001945772095375e5' \\\n--header 'Accept: application/json' \\\n--header 'Authorization: Bearer 1UVUJq1FseAsG2s0C1lLxlzDs7OsZqGjNB07Y6mouOjsFny3BdOrQoWtI5ftlChOjB6hgQ073l3YxGJsgt94Og' \\\n--header 'Content-Type: application/json' \\\n--header 'x-channel: APP' \\\n--header 'x-correlation-id: 5d72dd0c-b2f8-436e-a49f-3460b59b8812' \\\n--header 'x-tenant-id: CTP' \\\n--header 'x-toyotapay-id: ec2f2a55-c784-4ff7-9afe-494afb3d2490' \\\n--data '{\n    \n    \"bill_to\": {\n        \"address\": {\n            \"line1\": \"1031 Sheppard Ave W\",\n            \"line2\": \"\",\n            \"city\": \"Hawai\",\n            \"state\": \"Alabama\",\n            \"country\": \"United States\",\n            \"county\": \"\",\n            \"postal_code\": \"\"\n        },\n        \"fax\": null,\n        \"first_name\": \"dev\",\n        \"home_phone\": null,\n        \"last_name\": \"stage\",\n        \"mobile_phone\": null,\n        \"nickname\": null,\n        \"other_phone\": null,\n        \"other_phone_type\": null,\n        \"phone\": null,\n        \"email\": null,\n        \"tax_region\": null,\n        \"work_email\": null,\n        \"work_phone\": null\n    },\n    \"sold_to\": {\n        \"address\": {\n            \"line1\": \"1031 Sheppard Ave W\",\n            \"line2\": \"\",\n            \"city\": \"Hawai\",\n            \"state\": \"Alabama\",\n            \"country\": \"United States\",\n            \"county\": \"\",\n            \"postal_code\": \"\"\n        },\n        \"fax\": null,\n        \"first_name\": \"dev\",\n        \"home_phone\": null,\n        \"last_name\": \"stage\",\n        \"mobile_phone\": null,\n        \"nickname\": null,\n        \"other_phone\": null,\n        \"other_phone_type\": null,\n        \"phone\": null,\n        \"email\": null,\n        \"tax_region\": null,\n        \"work_email\": null,\n        \"work_phone\": null\n    }\n}'"
+      },
+      "response": []
+    }
+  ]
+}
