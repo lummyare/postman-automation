@@ -48,6 +48,22 @@ cd /home/ubuntu/postman-automation
 mvn clean test
 ```
 
+### Run tests with SSL handshake debugging enabled
+
+Use this when diagnosing TLS/mTLS negotiation issues:
+
+```bash
+cd /home/ubuntu/postman-automation
+mvn clean test \
+  -Dautomation.ssl.debug.enabled=true \
+  -Dautomation.ssl.debug.value=ssl,handshake \
+  -Dautomation.tls.protocol=TLSv1.3 \
+  -Dautomation.tls.client.protocols=TLSv1.3 \
+  -Dautomation.tls.cipher.suites=TLS_AES_128_GCM_SHA256
+```
+
+This prints detailed JVM SSL logs (ClientHello, cert exchange, key selection, alerts) so you can compare Java behavior with the successful curl handshake.
+
 ## Switch Environment (dev/staging/prod)
 
 `TestConfig` resolves environment in this order:
@@ -137,6 +153,15 @@ src/test/resources/certificates/
 # Override cert/key paths (classpath resource or filesystem path)
 -Dautomation.mtls.certificate.path=certificates/your-cert.pem
 -Dautomation.mtls.privatekey.path=certificates/your-key.key
+
+# TLS protocol and cipher suite preferences (defaults mirror successful curl handshake)
+-Dautomation.tls.protocol=TLSv1.3
+-Dautomation.tls.client.protocols=TLSv1.3
+-Dautomation.tls.cipher.suites=TLS_AES_128_GCM_SHA256
+
+# Enable/disable JVM SSL handshake debug output
+-Dautomation.ssl.debug.enabled=true
+-Dautomation.ssl.debug.value=ssl,handshake
 ```
 
 ### Replacing certificates
