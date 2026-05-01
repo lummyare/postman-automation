@@ -26,13 +26,17 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.security.Signature;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -48,6 +52,9 @@ public final class SSLConfig {
     private static final String CERTIFICATE_PATH_PROPERTY = "automation.mtls.certificate.path";
     private static final String PRIVATE_KEY_PATH_PROPERTY = "automation.mtls.privatekey.path";
     private static final String MTLS_ENABLED_PROPERTY = "automation.mtls.enabled";
+    private static final String TLS_PROTOCOL_PROPERTY = "automation.tls.protocol";
+    private static final String TLS_CIPHER_SUITES_PROPERTY = "automation.tls.cipher.suites";
+    private static final String TLS_CLIENT_PROTOCOLS_PROPERTY = "automation.tls.client.protocols";
 
     private static volatile Optional<MtlsMaterial> cachedMaterial;
 
@@ -92,11 +99,17 @@ public final class SSLConfig {
         String privateKeyPath = System.getProperty(PRIVATE_KEY_PATH_PROPERTY, DEFAULT_PRIVATE_KEY_RESOURCE).trim();
 
         try {
-            List<X509Certificate> certificateChain = loadCertificates(certificatePath);
+            List<X509Certificate> certificateChain = normalizeAndValidateCertificateChain(loadCertificates(certificatePath));
             PrivateKey privateKey = loadPrivateKey(privateKeyPath);
 
             if (certificateChain.isEmpty()) {
                 throw new IllegalStateException("No certificates found at " + certificatePath);
+            }
+
+            validatePrivateKeyMatchesCertificate(privateKey, certificateChain.get(0));
+
+            if (certificateChain.size() == 1) {
+                LOGGER.warn("Only one certificate was found in '{}'. If the server requires intermediates, include full chain (leaf -> intermediate(s) -> root).", certificatePath);
             }
 
             String keystorePassword = UUID.randomUUID().toString();
@@ -132,6 +145,144 @@ public final class SSLConfig {
             }
             return chain;
         }
+    }
+
+    private static List<X509Certificate> normalizeAndValidateCertificateChain(List<X509Certificate> certificates) {
+        if (certificates.isEmpty()) {
+            return certificates;
+        }
+
+        // Expected order for TLS client chain is: leaf -> intermediate(s) -> root.
+        X509Certificate leaf = findLikelyLeafCertificate(certificates);
+
+        List<X509Certificate> ordered = new ArrayList<>();
+        Set<X509Certificate> visited = new HashSet<>();
+
+        ordered.add(leaf);
+        visited.add(leaf);
+
+        X509Certificate current = leaf;
+        while (true) {
+            X509Certificate issuer = findIssuerCertificate(current, certificates, visited);
+            if (issuer == null) {
+                break;
+            }
+            ordered.add(issuer);
+            visited.add(issuer);
+            current = issuer;
+        }
+
+        if (ordered.size() != certificates.size()) {
+            for (X509Certificate certificate : certificates) {
+                if (!visited.contains(certificate)) {
+                    ordered.add(certificate);
+                }
+            }
+            LOGGER.warn("Certificate chain could not be fully linked by issuer/subject. Appended remaining certificates as-is. Verify PEM order and completeness.");
+        }
+
+        logCertificateChain(ordered);
+        validateChainAdjacency(ordered);
+
+        return ordered;
+    }
+
+    private static X509Certificate findLikelyLeafCertificate(List<X509Certificate> certificates) {
+        for (X509Certificate candidate : certificates) {
+            boolean candidateIsIssuer = false;
+            for (X509Certificate other : certificates) {
+                if (candidate == other) {
+                    continue;
+                }
+                if (other.getIssuerX500Principal().equals(candidate.getSubjectX500Principal())) {
+                    candidateIsIssuer = true;
+                    break;
+                }
+            }
+            if (!candidateIsIssuer) {
+                return candidate;
+            }
+        }
+
+        // Fallback: preserve existing behavior if we cannot infer a better leaf.
+        return certificates.get(0);
+    }
+
+    private static X509Certificate findIssuerCertificate(X509Certificate current,
+                                                          List<X509Certificate> certificates,
+                                                          Set<X509Certificate> visited) {
+        for (X509Certificate candidate : certificates) {
+            if (visited.contains(candidate) || candidate == current) {
+                continue;
+            }
+            if (current.getIssuerX500Principal().equals(candidate.getSubjectX500Principal())) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    private static void logCertificateChain(List<X509Certificate> chain) {
+        for (int index = 0; index < chain.size(); index++) {
+            X509Certificate cert = chain.get(index);
+            LOGGER.info("mTLS certificate chain[{}]: subject='{}', issuer='{}'",
+                    index,
+                    cert.getSubjectX500Principal().getName(),
+                    cert.getIssuerX500Principal().getName());
+        }
+    }
+
+    private static void validateChainAdjacency(List<X509Certificate> chain) {
+        if (chain.size() < 2) {
+            return;
+        }
+
+        for (int i = 0; i < chain.size() - 1; i++) {
+            X509Certificate current = chain.get(i);
+            X509Certificate next = chain.get(i + 1);
+            if (!current.getIssuerX500Principal().equals(next.getSubjectX500Principal())) {
+                LOGGER.warn("Certificate chain gap detected between entries {} and {}. issuer='{}' next-subject='{}'.",
+                        i,
+                        i + 1,
+                        current.getIssuerX500Principal().getName(),
+                        next.getSubjectX500Principal().getName());
+            }
+        }
+    }
+
+    private static void validatePrivateKeyMatchesCertificate(PrivateKey privateKey, X509Certificate certificate) throws Exception {
+        String algorithm = resolveSignatureAlgorithm(privateKey);
+        byte[] sample = "mtls-key-match-check".getBytes(StandardCharsets.UTF_8);
+
+        Signature signer = Signature.getInstance(algorithm);
+        signer.initSign(privateKey);
+        signer.update(sample);
+        byte[] signature = signer.sign();
+
+        Signature verifier = Signature.getInstance(algorithm);
+        verifier.initVerify(certificate.getPublicKey());
+        verifier.update(sample);
+
+        if (!verifier.verify(signature)) {
+            throw new IllegalStateException("Private key does not match the leaf certificate public key.");
+        }
+
+        LOGGER.info("Validated private key matches certificate using signature algorithm {}.", algorithm);
+    }
+
+    private static String resolveSignatureAlgorithm(PrivateKey privateKey) {
+        String keyAlgorithm = privateKey.getAlgorithm();
+        if ("RSA".equalsIgnoreCase(keyAlgorithm)) {
+            return "SHA256withRSA";
+        }
+        if ("EC".equalsIgnoreCase(keyAlgorithm) || "ECDSA".equalsIgnoreCase(keyAlgorithm)) {
+            return "SHA256withECDSA";
+        }
+        if ("DSA".equalsIgnoreCase(keyAlgorithm)) {
+            return "SHA256withDSA";
+        }
+
+        throw new IllegalStateException("Unsupported private key algorithm for key/cert verification: " + keyAlgorithm);
     }
 
     private static PrivateKey loadPrivateKey(String privateKeyPath) throws Exception {
@@ -186,7 +337,7 @@ public final class SSLConfig {
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init((KeyStore) null);
 
-        String preferredProtocol = System.getProperty("automation.tls.protocol", "TLSv1.3");
+        String preferredProtocol = System.getProperty(TLS_PROTOCOL_PROPERTY, "TLSv1.3");
         SSLContext sslContext;
         try {
             sslContext = SSLContext.getInstance(preferredProtocol);
@@ -196,8 +347,50 @@ public final class SSLConfig {
         }
 
         sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), new SecureRandom());
+
+        logTlsCompatibility(sslContext);
         LOGGER.info("Initialized SSLContext with protocol '{}' for mTLS requests.", sslContext.getProtocol());
         return sslContext;
+    }
+
+    private static void logTlsCompatibility(SSLContext sslContext) {
+        String configuredProtocols = System.getProperty(TLS_CLIENT_PROTOCOLS_PROPERTY, "TLSv1.3");
+        String configuredCipherSuites = System.getProperty(TLS_CIPHER_SUITES_PROPERTY, "TLS_AES_128_GCM_SHA256");
+
+        Set<String> supportedProtocols = new HashSet<>(Arrays.asList(sslContext.getSupportedSSLParameters().getProtocols()));
+        Set<String> supportedCipherSuites = new HashSet<>(Arrays.asList(sslContext.getSupportedSSLParameters().getCipherSuites()));
+
+        for (String protocol : splitCsv(configuredProtocols)) {
+            if (supportedProtocols.contains(protocol)) {
+                LOGGER.info("Configured TLS protocol '{}' is supported by current JVM/provider.", protocol);
+            } else {
+                LOGGER.warn("Configured TLS protocol '{}' is NOT supported by current JVM/provider.", protocol);
+            }
+        }
+
+        for (String cipherSuite : splitCsv(configuredCipherSuites)) {
+            if (supportedCipherSuites.contains(cipherSuite)) {
+                LOGGER.info("Configured cipher suite '{}' is supported by current JVM/provider.", cipherSuite);
+            } else {
+                LOGGER.warn("Configured cipher suite '{}' is NOT supported by current JVM/provider.", cipherSuite);
+            }
+        }
+    }
+
+    private static List<String> splitCsv(String value) {
+        List<String> values = new ArrayList<>();
+        if (value == null || value.isBlank()) {
+            return values;
+        }
+
+        for (String token : value.split(",")) {
+            String trimmed = token.trim();
+            if (!trimmed.isBlank()) {
+                values.add(trimmed);
+            }
+        }
+
+        return values;
     }
 
     private static InputStream openResource(String resourcePath) throws IOException {

@@ -26,7 +26,14 @@ public final class ApiClient {
     private static final int CONNECTION_TIMEOUT_MS = Integer.getInteger("automation.http.connection.timeout.ms", 30_000);
     private static final int SOCKET_TIMEOUT_MS = Integer.getInteger("automation.http.socket.timeout.ms", 30_000);
     private static final int CONNECTION_MANAGER_TIMEOUT_MS = Integer.getInteger("automation.http.connection.manager.timeout.ms", 30_000);
+
     private static final String TLS_PROTOCOL = System.getProperty("automation.tls.protocol", "TLSv1.3");
+    private static final String TLS_PROTOCOLS = System.getProperty("automation.tls.protocols", "TLSv1.3,TLSv1.2");
+    private static final String TLS_CLIENT_PROTOCOLS = System.getProperty("automation.tls.client.protocols", "TLSv1.3");
+    private static final String TLS_CIPHER_SUITES = System.getProperty("automation.tls.cipher.suites", "TLS_AES_128_GCM_SHA256");
+
+    private static final String SSL_DEBUG_ENABLED_PROPERTY = "automation.ssl.debug.enabled";
+    private static final String SSL_DEBUG_VALUE_PROPERTY = "automation.ssl.debug.value";
 
     static {
         configureTransportDefaults();
@@ -39,11 +46,33 @@ public final class ApiClient {
     private static void configureTransportDefaults() {
         // Defensive JVM-level defaults to avoid HTTP/2 negotiation issues when integrations rely on JVM HTTP clients.
         System.setProperty("jdk.httpclient.enableHttp2", "false");
-        System.setProperty("https.protocols", "TLSv1.3,TLSv1.2");
+        System.setProperty("https.protocols", TLS_PROTOCOLS);
+        System.setProperty("jdk.tls.client.protocols", TLS_CLIENT_PROTOCOLS);
 
-        LOGGER.info("Transport defaults initialized: jdk.httpclient.enableHttp2={}, https.protocols={}",
+        if (!TLS_CIPHER_SUITES.isBlank()) {
+            System.setProperty("https.cipherSuites", TLS_CIPHER_SUITES);
+            System.setProperty("jdk.tls.client.cipherSuites", TLS_CIPHER_SUITES);
+        }
+
+        configureSslDebugLogging();
+
+        LOGGER.info("Transport defaults initialized: jdk.httpclient.enableHttp2={}, https.protocols={}, jdk.tls.client.protocols={}, cipherSuites={}",
                 System.getProperty("jdk.httpclient.enableHttp2"),
-                System.getProperty("https.protocols"));
+                System.getProperty("https.protocols"),
+                System.getProperty("jdk.tls.client.protocols"),
+                System.getProperty("jdk.tls.client.cipherSuites"));
+    }
+
+    private static void configureSslDebugLogging() {
+        boolean sslDebugEnabled = Boolean.parseBoolean(System.getProperty(SSL_DEBUG_ENABLED_PROPERTY, "false"));
+        if (!sslDebugEnabled) {
+            LOGGER.info("SSL debug logging is disabled ({}=false).", SSL_DEBUG_ENABLED_PROPERTY);
+            return;
+        }
+
+        String sslDebugValue = System.getProperty(SSL_DEBUG_VALUE_PROPERTY, "ssl,handshake");
+        System.setProperty("javax.net.debug", sslDebugValue);
+        LOGGER.info("Enabled javax.net SSL debugging with value '{}'.", sslDebugValue);
     }
 
     public static RequestSpecification buildBaseRequest(EnvironmentConfig environmentConfig) {
@@ -66,10 +95,11 @@ public final class ApiClient {
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
                 .addFilter((requestSpec, responseSpec, filterContext) -> {
-                    LOGGER.info("Dispatching {} {} (configured protocol={}, timeouts: connect={}ms socket={}ms cm={}ms)",
+                    LOGGER.info("Dispatching {} {} (configured protocol={}, TLS={}, timeouts: connect={}ms socket={}ms cm={}ms)",
                             requestSpec.getMethod(),
                             requestSpec.getURI(),
                             HttpVersion.HTTP_1_1,
+                            TLS_PROTOCOL,
                             CONNECTION_TIMEOUT_MS,
                             SOCKET_TIMEOUT_MS,
                             CONNECTION_MANAGER_TIMEOUT_MS);
@@ -81,7 +111,7 @@ public final class ApiClient {
                                 extractProtocol(response.getStatusLine()));
                         return response;
                     } catch (Exception exception) {
-                        LOGGER.error("Request failed before a response status line was received (configured protocol={}).", HttpVersion.HTTP_1_1, exception);
+                        LOGGER.error("Request failed before a response status line was received (configured protocol={}, TLS={}).", HttpVersion.HTTP_1_1, TLS_PROTOCOL, exception);
                         throw exception;
                     }
                 });
