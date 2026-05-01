@@ -13,8 +13,21 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.apache.http.HttpVersion;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import java.security.KeyStore;
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.Optional;
 
 /**
  * RestAssured client factory. Builds reusable RequestSpecification objects.
@@ -80,17 +93,42 @@ public final class ApiClient {
     }
 
     public static RequestSpecification buildBaseRequest(EnvironmentConfig environmentConfig, boolean includeDefaultHeaders) {
-        RestAssuredConfig restAssuredConfig = RestAssuredConfig.config().httpClient(HttpClientConfig.httpClientConfig()
+        HttpClientConfig httpClientConfig = HttpClientConfig.httpClientConfig()
                 .setParam("http.protocol.version", HttpVersion.HTTP_1_1)
                 .setParam("http.connection.timeout", CONNECTION_TIMEOUT_MS)
                 .setParam("http.socket.timeout", SOCKET_TIMEOUT_MS)
-                .setParam("http.connection-manager.timeout", (long) CONNECTION_MANAGER_TIMEOUT_MS));
+                .setParam("http.connection-manager.timeout", (long) CONNECTION_MANAGER_TIMEOUT_MS);
+
+        Optional<SSLConfig.MtlsMaterial> mtlsMaterial = SSLConfig.getMtlsMaterial();
+        if (mtlsMaterial.isPresent()) {
+            try {
+                SSLContext sslContext = buildMtlsSslContext(mtlsMaterial.get());
+                RequestConfig requestConfig = RequestConfig.custom()
+                        .setConnectTimeout(CONNECTION_TIMEOUT_MS)
+                        .setSocketTimeout(SOCKET_TIMEOUT_MS)
+                        .setConnectionRequestTimeout(CONNECTION_MANAGER_TIMEOUT_MS)
+                        .build();
+
+                httpClientConfig = httpClientConfig.httpClientFactory(() -> HttpClients.custom()
+                        .setSSLContext(sslContext)
+                        .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+                        .setDefaultRequestConfig(requestConfig)
+                        .build());
+
+                LOGGER.info("Configured RestAssured HTTP client with mTLS SSLContext and explicit KeyManager initialization.");
+            } catch (Exception exception) {
+                LOGGER.error("Failed to configure RestAssured with mTLS SSLContext. Falling back to default TLS client without client certificate.", exception);
+            }
+        } else {
+            LOGGER.warn("No mTLS keystore loaded. Requests will be sent without a client certificate.");
+        }
+
+        RestAssuredConfig restAssuredConfig = RestAssuredConfig.config().httpClient(httpClientConfig);
 
         RequestSpecBuilder builder = new RequestSpecBuilder()
                 .setBaseUri(environmentConfig.getBaseUrl())
                 .setContentType(ContentType.JSON)
                 .setConfig(restAssuredConfig)
-                .setRelaxedHTTPSValidation(TLS_PROTOCOL)
                 .addHeader("Accept", "application/json")
                 .addFilter(new RequestLoggingFilter(LogDetail.ALL))
                 .addFilter(new ResponseLoggingFilter(LogDetail.ALL))
@@ -116,12 +154,6 @@ public final class ApiClient {
                     }
                 });
 
-        SSLConfig.getMtlsMaterial().ifPresentOrElse(material -> {
-                    builder.setKeyStore(material.getKeyStorePath().toString(), material.getKeyStorePassword());
-                    LOGGER.info("Applied mTLS keystore from {}", material.getKeyStorePath());
-                },
-                () -> LOGGER.warn("No mTLS keystore loaded. Requests will be sent without a client certificate."));
-
         if (includeDefaultHeaders) {
             environmentConfig.getChannel()
                     .filter(value -> !value.isBlank())
@@ -137,6 +169,54 @@ public final class ApiClient {
         }
 
         return RestAssured.given().spec(builder.build());
+    }
+
+    private static SSLContext buildMtlsSslContext(SSLConfig.MtlsMaterial material) throws Exception {
+        KeyStore keyStore = material.getKeyStore();
+        char[] password = material.getKeyStorePassword().toCharArray();
+
+        KeyManagerFactory keyManagerFactory = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        keyManagerFactory.init(keyStore, password);
+        KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
+
+        TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trustManagerFactory.init((KeyStore) null);
+        TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+
+        SSLContext sslContext;
+        try {
+            sslContext = SSLContext.getInstance(TLS_PROTOCOL);
+        } catch (Exception protocolEx) {
+            LOGGER.warn("Unable to initialize SSLContext with protocol '{}'. Falling back to 'TLS'.", TLS_PROTOCOL, protocolEx);
+            sslContext = SSLContext.getInstance("TLS");
+        }
+
+        sslContext.init(keyManagers, trustManagers, new SecureRandom());
+        logKeyManagerInitialization(keyManagers);
+
+        LOGGER.info("mTLS SSLContext initialized for RestAssured using protocol '{}' and keystore '{}'.",
+                sslContext.getProtocol(),
+                material.getKeyStorePath());
+
+        return sslContext;
+    }
+
+    private static void logKeyManagerInitialization(KeyManager[] keyManagers) {
+        String managerClassNames = Arrays.stream(keyManagers)
+                .map(manager -> manager == null ? "null" : manager.getClass().getName())
+                .reduce((left, right) -> left + ", " + right)
+                .orElse("<none>");
+
+        boolean hasDummyManager = Arrays.stream(keyManagers)
+                .filter(manager -> manager != null)
+                .anyMatch(manager -> manager.getClass().getName().contains("DummyX509KeyManager"));
+
+        LOGGER.info("Initialized KeyManager(s): [{}]", managerClassNames);
+        if (hasDummyManager) {
+            LOGGER.error("Detected DummyX509KeyManager. Client certificate may not be sent during TLS handshake.");
+        } else {
+            LOGGER.info("KeyManager initialization looks correct: DummyX509KeyManager not detected.");
+        }
     }
 
     private static String extractProtocol(String statusLine) {

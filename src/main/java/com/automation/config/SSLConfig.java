@@ -9,6 +9,7 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
@@ -122,7 +123,7 @@ public final class SSLConfig {
                     privateKeyPath,
                     certificateChain.get(0).getSubjectX500Principal().getName());
 
-            return Optional.of(new MtlsMaterial(keyStoreFile, keystorePassword, sslContext));
+            return Optional.of(new MtlsMaterial(keyStoreFile, keystorePassword, sslContext, keyStore));
         } catch (Exception exception) {
             LOGGER.error("Unable to initialize mTLS material (certificate='{}', key='{}'). Requests will continue without client cert.",
                     certificatePath,
@@ -346,11 +347,31 @@ public final class SSLConfig {
             sslContext = SSLContext.getInstance("TLS");
         }
 
-        sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), new SecureRandom());
+        KeyManager[] keyManagers = keyManagerFactory.getKeyManagers();
+        sslContext.init(keyManagers, trustManagerFactory.getTrustManagers(), new SecureRandom());
 
+        logKeyManagers(keyManagers);
         logTlsCompatibility(sslContext);
         LOGGER.info("Initialized SSLContext with protocol '{}' for mTLS requests.", sslContext.getProtocol());
         return sslContext;
+    }
+
+    private static void logKeyManagers(KeyManager[] keyManagers) {
+        String managerNames = Arrays.stream(keyManagers)
+                .map(manager -> manager == null ? "null" : manager.getClass().getName())
+                .reduce((left, right) -> left + ", " + right)
+                .orElse("<none>");
+
+        boolean hasDummyManager = Arrays.stream(keyManagers)
+                .filter(manager -> manager != null)
+                .anyMatch(manager -> manager.getClass().getName().contains("DummyX509KeyManager"));
+
+        LOGGER.info("SSLConfig KeyManager(s): [{}]", managerNames);
+        if (hasDummyManager) {
+            LOGGER.error("SSLConfig initialized with DummyX509KeyManager. Client certificate may not be presented.");
+        } else {
+            LOGGER.info("SSLConfig KeyManager initialization verified: no DummyX509KeyManager detected.");
+        }
     }
 
     private static void logTlsCompatibility(SSLContext sslContext) {
@@ -418,11 +439,13 @@ public final class SSLConfig {
         private final Path keyStorePath;
         private final String keyStorePassword;
         private final SSLContext sslContext;
+        private final KeyStore keyStore;
 
-        private MtlsMaterial(Path keyStorePath, String keyStorePassword, SSLContext sslContext) {
+        private MtlsMaterial(Path keyStorePath, String keyStorePassword, SSLContext sslContext, KeyStore keyStore) {
             this.keyStorePath = keyStorePath;
             this.keyStorePassword = keyStorePassword;
             this.sslContext = sslContext;
+            this.keyStore = keyStore;
         }
 
         public Path getKeyStorePath() {
@@ -435,6 +458,10 @@ public final class SSLConfig {
 
         public SSLContext getSslContext() {
             return sslContext;
+        }
+
+        public KeyStore getKeyStore() {
+            return keyStore;
         }
     }
 }
