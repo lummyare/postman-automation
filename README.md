@@ -102,6 +102,49 @@ env.prod.file=environments/TC_Agent_prod.postman_environment.json
 4. Add one `@Test` per request/scenario.
 5. Run class from IntelliJ test viewer.
 
+## mTLS Configuration (Required)
+
+This API environment requires **mutual TLS (mTLS)**. The framework now loads a client certificate and private key and applies them to every RestAssured request via `ApiClient`.
+
+### Certificate files location
+
+Store these files under:
+
+```text
+src/test/resources/certificates/
+├── secure-int-stg-stg2-mtls.pem
+└── secure-int-mtls .key
+```
+
+> Note: the key filename includes a space before `.key` and must match exactly unless you override the path via system properties.
+
+### How it works
+
+- `com.automation.config.SSLConfig` loads:
+  - PEM certificate chain (`.pem`)
+  - PEM private key (`.key`)
+- The files are converted into an in-memory PKCS12 keystore.
+- A temporary `.p12` keystore file is created and applied to RestAssured (`RequestSpecBuilder.setKeyStore(...)`).
+- `ApiClient` still enables relaxed HTTPS validation for non-production certificate-chain issues.
+- If mTLS files are missing/invalid, a detailed error is logged and requests continue without client certificates (for troubleshooting visibility).
+
+### Optional system properties
+
+```bash
+# Disable mTLS (debugging only)
+-Dautomation.mtls.enabled=false
+
+# Override cert/key paths (classpath resource or filesystem path)
+-Dautomation.mtls.certificate.path=certificates/your-cert.pem
+-Dautomation.mtls.privatekey.path=certificates/your-key.key
+```
+
+### Replacing certificates
+
+1. Replace files in `src/test/resources/certificates/`.
+2. Keep existing names **or** pass override system properties above.
+3. Run `mvn clean test` to verify the new cert/key pair loads successfully.
+
 ## Notes
 
 - Uploaded files are already copied under `src/test/resources/collections` and `src/test/resources/environments`.
