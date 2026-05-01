@@ -186,8 +186,17 @@ public final class SSLConfig {
         TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
         trustManagerFactory.init((KeyStore) null);
 
-        SSLContext sslContext = SSLContext.getInstance("TLS");
+        String preferredProtocol = System.getProperty("automation.tls.protocol", "TLSv1.3");
+        SSLContext sslContext;
+        try {
+            sslContext = SSLContext.getInstance(preferredProtocol);
+        } catch (Exception ex) {
+            LOGGER.warn("Unable to initialize SSLContext with protocol '{}'. Falling back to 'TLS'.", preferredProtocol, ex);
+            sslContext = SSLContext.getInstance("TLS");
+        }
+
         sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), new SecureRandom());
+        LOGGER.info("Initialized SSLContext with protocol '{}' for mTLS requests.", sslContext.getProtocol());
         return sslContext;
     }
 
